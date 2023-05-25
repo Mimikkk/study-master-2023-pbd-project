@@ -12,37 +12,39 @@ import scala.collection.JavaConverters._
 
 class KafkaRecordProducer extends RecordProducer {
   if (args.length != 4) {
-    println("Usage: KafkaRecordProducer <directory: path> <secondsBetweenStreams: int> <topic: kafka-topic> <bootstrap.servers: kafka-server>")
+    println("Usage: KafkaRecordProducer <parts-directory: path> <seconds-between-parts: int> <topic: kafka-topic> <bootstrap.servers: kafka-server>")
     System.exit(1)
   }
 
-  private final val directory = args(0)
-  private final val secondsPerStreams = args(1).toInt
-  private final val topic = args(2)
+  private final object configuration {
+    final val partsDirectory = args(0)
+    final val secondsBetweenParts = args(1).toInt
+    final val topic = args(2)
+    final val server = args(3)
+  }
+
   private final val properties = new Properties {
-    putAll(
-      Map(
-        "bootstrap.servers" -> args(3),
-        "acks" -> "all",
-        "retries" -> "0",
-        "batch.size" -> "16384",
-        "linger.ms" -> "1",
-        "buffer.memory" -> "33554432",
-        "key.serializer" -> "org.apache.kafka.common.serialization.StringSerializer",
-        "value.serializer" -> "org.apache.kafka.common.serialization.StringSerializer"
-      ).asJava
-    )
+    putAll(Map(
+      "bootstrap.servers" -> configuration.server,
+      "acks" -> "all",
+      "retries" -> "0",
+      "batch.size" -> "16384",
+      "linger.ms" -> "1",
+      "buffer.memory" -> "33554432",
+      "key.serializer" -> "org.apache.kafka.common.serialization.StringSerializer",
+      "value.serializer" -> "org.apache.kafka.common.serialization.StringSerializer"
+    ).asJava)
   }
 
   private final val producer = new KafkaProducer[String, String](properties)
-  private final val paths = new File(directory) listFiles() map (_.getAbsolutePath)
+  private final val partsPaths = new File(configuration.partsDirectory) listFiles() map (_.getAbsolutePath)
 
-  paths.sorted foreach (path => try {
+  partsPaths.sorted foreach (path => try {
     lines(Paths get path) skip 1 forEach new Consumer[String] {
       override def accept(row: String): Unit =
-        producer send new ProducerRecord(topic, row.split(',')(0), row)
+        producer send new ProducerRecord(configuration.topic, row.split(',')(0), row)
     }
-    SECONDS sleep secondsPerStreams
+    SECONDS sleep configuration.secondsBetweenParts
   } catch {
     case e: Throwable => e printStackTrace()
   })
