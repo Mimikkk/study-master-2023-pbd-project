@@ -29,4 +29,4 @@ kafka-topics.sh \
   --topic "$KAFKA_CONTENT_TOPIC_NAME" \
   || exit
 
-mysql -u root -p < setup.sql
+mysql -u root -p < setup-database.sql
