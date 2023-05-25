@@ -1,10 +1,10 @@
 # Cloud parameters
-export BUCKET_NAME="flink-pbd-2023"
+export BUCKET_NAME="pbd-23-dz"
 export CLUSTER_NAME=$(/usr/share/google/get_metadata_value attributes/dataproc-cluster-name)
 export HADOOP_CONF_DIR=/etc/hadoop/conf
 export HADOOP_CLASSPATH=$(hadoop classpath)
 
-export INPUT_DIRECTORY_PATH="$HOME/resources/datasets/stock-prices/streams"
+export INPUT_DIRECTORY_PATH="$HOME/resources/datasets/stock-prices/parts"
 export INPUT_FILE_PATH="$HOME/resources/datasets/stocks-prices/meta.csv"
 
 # Kafka parameters
@@ -26,5 +26,4 @@ export FLINK_DIRECTORY="$HOME/flink-1.14.4"
 export ANOMALY_STOCK_DAYS_RANGE=7
 export ANOMALY_STOCK_PERCENT_FLUCTUATION=4
 
-# H for historical, R for real-time
-export PROCESSING_TYPE="H"
+export PROCESSING_TYPE="historical"

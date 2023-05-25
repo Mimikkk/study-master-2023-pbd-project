@@ -41,6 +41,8 @@ object Processor {
         val dayRange: Int = args(8).toInt
         val percentageFluctuation: Float = args(9).toFloat / 100
       }
+
+      val updateStrategy = UpdateStrategy.from(args(10))
     }
 
     val environment = StreamExecutionEnvironment.getExecutionEnvironment

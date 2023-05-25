@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit.SECONDS
 import java.util.function.Consumer
 import scala.collection.JavaConverters._
 
-class KafkaRecordProducer extends RecordProducer {
+object KafkaRecordProducer extends RecordProducer {
   if (args.length != 4) {
     println("Usage: KafkaRecordProducer <parts-directory: path> <seconds-between-parts: int> <topic: kafka-topic> <bootstrap.servers: kafka-server>")
     System.exit(1)

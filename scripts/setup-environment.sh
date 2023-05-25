@@ -6,9 +6,9 @@ curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89
 
 sudo apt-get update
 sudo apt-get install sbt
-hadoop fs -copyToLocal gs://"${BUCKET_NAME}"/resources/datasets/stocks/meta.csv "$INPUT_FILE_PATH"|| exit
-hadoop fs -copyToLocal gs://"${BUCKET_NAME}"/resources/datasets/stocks/streams.zip "$HOME/resources/datasets/stocks/streams.zip" || exit
-unzip -j "$HOME/resources/datasets/stocks/streams.zip" -d "$INPUT_DIRECTORY_PATH" || exit
+hadoop fs -copyToLocal gs://"${BUCKET_NAME}"/resources/datasets/stock-prices/meta.csv "$INPUT_FILE_PATH"|| exit
+hadoop fs -copyToLocal gs://"${BUCKET_NAME}"/resources/datasets/stock-prices/parts.zip "$HOME/resources/datasets/stock-prices/parts.zip" || exit
+unzip -j "$HOME/resources/datasets/stock-prices/parts.zip" -d "$INPUT_DIRECTORY_PATH" || exit
 
 wget https://dlcdn.apache.org/flink/flink-1.14.4/flink-1.14.4-bin-scala_2.11.tgz -P "$HOME" || exit
 tar -xzf "$HOME/flink-1.14.4-bin-scala_2.11.tgz" || exit
