@@ -1,3 +1,5 @@
+source ./setup-variables.sh
+
 gcloud dataproc clusters create "${CLUSTER_NAME}" \
   --enable-component-gateway --bucket "${BUCKET_NAME}" \
   --region "${REGION}" --subnet default --zone "${ZONE}" \
