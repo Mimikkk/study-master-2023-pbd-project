@@ -13,6 +13,7 @@ rm "$INPUT_DIRECTORY_PATH".zip
 
 wget https://dlcdn.apache.org/flink/flink-1.17.1/flink-1.17.1-bin-scala_2.12.tgz -P "$HOME"
 tar -xzf "$HOME/flink-1.17.1-bin-scala_2.12.tgz"
+rm "$HOME/flink-1.17.1-bin-scala_2.12.tgz"
 sbt clean assembly
 
 kafka-topics.sh \
