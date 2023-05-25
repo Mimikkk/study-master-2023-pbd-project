@@ -8,8 +8,8 @@ libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "8.0.32",
   "org.apache.flink" % "flink-core" % "1.16.1",
   "org.apache.flink" %% "flink-clients" % "1.14.4",
-  "org.apache.flink" %% "flink-scala" % "1.16.1",
-  "org.apache.flink" %% "flink-streaming-scala" % "1.16.1",
+  "org.apache.flink" %% "flink-scala" % "1.14.4",
+  "org.apache.flink" %% "flink-streaming-scala" % "1.14.4",
   "org.apache.flink" %% "flink-connector-kafka" % "1.14.4",
   "org.apache.flink" %% "flink-connector-jdbc" % "1.14.4"
 )
