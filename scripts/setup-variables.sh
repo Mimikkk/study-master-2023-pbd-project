@@ -5,7 +5,7 @@ export HADOOP_CONF_DIR=/etc/hadoop/conf
 export HADOOP_CLASSPATH=$(hadoop classpath)
 
 export INPUT_DIRECTORY_PATH="$HOME/resources/datasets/stock-prices/parts"
-export INPUT_FILE_PATH="$HOME/resources/datasets/stocks-prices/meta.csv"
+export INPUT_FILE_PATH="$HOME/resources/datasets/stock-prices/meta.csv"
 
 # Kafka parameters
 export KAFKA_PRODUCER_SLEEP_TIME=30
