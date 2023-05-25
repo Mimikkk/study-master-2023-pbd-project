@@ -12,7 +12,8 @@ from [Kaggle](https://www.kaggle.com/jacksoncrow/stock-market-dataset).
 - [Google Cloud Platform](https://cloud.google.com/)
 - [Google Cloud Storage](https://cloud.google.com/storage)
 - [Google Cloud Dataproc](https://cloud.google.com/dataproc)
-- [setup-cluster.sh](./scripts/setup-cluster.sh) - Script file to set up the cluster on [Google Cloud Platform](https://cloud.google.com/) using
+- [setup-cluster.sh](./scripts/setup-cluster.sh) - Script file to set up the cluster
+  on [Google Cloud Platform](https://cloud.google.com/) using
   [Google Cloud Dataproc](https://cloud.google.com/dataproc).
 
 ```shell
@@ -76,6 +77,7 @@ Setup scripts:
 - [setup-environment.sh](./scripts/setup-environment.sh) is used to set up the environment.
 - [setup-cluster.sh](./scripts/setup-cluster.sh) is used to set up the cluster.
 - [setup-database.sql](./scripts/setup-database.sql) is used to set up the database.
+- [setup-bucket.sh](./scripts/setup-bucket.sh) is used to set up the bucket with the data.
 
 Run scripts:
 
