@@ -40,10 +40,10 @@ object KafkaRecordProducer extends RecordProducer {
   private final val partsPaths = new File(configuration.partsDirectory) listFiles() map (_.getAbsolutePath)
 
   partsPaths.sorted foreach (path => try {
-    lines(Paths get path) skip 1 forEach new Consumer[String] {
-      override def accept(row: String): Unit =
-        producer send new ProducerRecord(configuration.topic, row.split(',')(0), row)
-    }
+    println("< Stream Sent >")
+    lines(Paths get path) skip 1 forEach (
+      row => producer send new ProducerRecord(configuration.topic, row.split(',')(0), row)
+    )
     SECONDS sleep configuration.secondsBetweenParts
   } catch {
     case e: Throwable => e printStackTrace()

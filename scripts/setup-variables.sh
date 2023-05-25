@@ -8,7 +8,7 @@ export INPUT_DIRECTORY_PATH="$HOME/resources/datasets/stock-prices/parts"
 export INPUT_FILE_PATH="$HOME/resources/datasets/stock-prices/meta.csv"
 
 # Kafka parameters
-export KAFKA_PRODUCER_SLEEP_TIME=30
+export KAFKA_PRODUCER_SLEEP_TIME=1
 export KAFKA_CONTENT_TOPIC_NAME="stock-prices"
 export KAFKA_ANOMALY_TOPIC_NAME="stock-prices-anomalies"
 export KAFKA_BOOTSTRAP_SERVERS="${CLUSTER_NAME}-w-0:9092"

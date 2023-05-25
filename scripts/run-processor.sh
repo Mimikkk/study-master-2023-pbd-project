@@ -1,4 +1,4 @@
-source ./setup-variables.sh
+source ./scripts/setup-variables.sh
 
 "$FLINK_DIRECTORY"/bin/flink run \
   -m yarn-cluster -p 2 -yjm 1024m -ytm 2048m \
