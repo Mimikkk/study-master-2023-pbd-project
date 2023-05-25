@@ -26,7 +26,7 @@ kafka-topics.sh \
   --create \
   --replication-factor 1 \
   --partitions 1 \
-  --topic "$KAFKA_DATA_TOPIC_NAME" \
+  --topic "$KAFKA_CONTENT_TOPIC_NAME" \
   || exit
 
 mysql -u root -p < setup.sql

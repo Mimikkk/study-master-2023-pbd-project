@@ -9,7 +9,7 @@ export INPUT_FILE_PATH="$HOME/resources/datasets/stocks-prices/meta.csv"
 
 # Kafka parameters
 export KAFKA_PRODUCER_SLEEP_TIME=30
-export KAFKA_DATA_TOPIC_NAME="stock-prices"
+export KAFKA_CONTENT_TOPIC_NAME="stock-prices"
 export KAFKA_ANOMALY_TOPIC_NAME="stock-prices-anomalies"
 export KAFKA_BOOTSTRAP_SERVERS="${CLUSTER_NAME}-w-0:9092"
 export KAFKA_GROUP_ID="stock-prices-group"
@@ -22,8 +22,8 @@ export JDBC_PASSWORD="password"
 # Flink parameters
 export FLINK_DIRECTORY="$HOME/flink-1.14.4"
 
-# Processor parameters
-export ANOMALY_STOCK_DAYS=7
+# Anomaly parameters
+export ANOMALY_STOCK_DAYS_RANGE=7
 export ANOMALY_STOCK_PERCENT_FLUCTUATION=4
 
 # H for historical, R for real-time
