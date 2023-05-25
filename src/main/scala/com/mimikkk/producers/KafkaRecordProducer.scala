@@ -39,6 +39,7 @@ object KafkaRecordProducer extends RecordProducer {
   private final val producer = new KafkaProducer[String, String](properties)
   private final val partsPaths = new File(configuration.partsDirectory) listFiles() map (_.getAbsolutePath)
 
+  println("Start broadcasting...")
   partsPaths.sorted foreach (path => try {
     println("< Stream Sent >")
     lines(Paths get path) skip 1 forEach (
@@ -48,6 +49,7 @@ object KafkaRecordProducer extends RecordProducer {
   } catch {
     case e: Throwable => e printStackTrace()
   })
+  println("Finished broadcasting.")
 
   producer close()
 }
