@@ -14,7 +14,7 @@ rm "$INPUT_DIRECTORY_PATH".zip
 wget https://dlcdn.apache.org/flink/flink-1.17.1/flink-1.17.1-bin-scala_2.12.tgz -P "$HOME"
 tar -xzf "$HOME/flink-1.17.1-bin-scala_2.12.tgz"
 rm "$HOME/flink-1.17.1-bin-scala_2.12.tgz"
-sbt clean assembly
+sbt -J-Xms2048m -J-Xmx2048m clean assembly
 
 kafka-topics.sh \
   --zookeeper "${CLUSTER_NAME}"-m:2181 \
