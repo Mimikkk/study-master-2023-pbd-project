@@ -4,7 +4,14 @@ import java.sql.{Connection, Date, DriverManager}
 
 object DatabaseRecordConsumer extends RecordConsumer {
   if (args.length != 3) {
-    println("Usage: DatabaseRecordConsumer <database_url: database-url> <username: string> <password: string>")
+    println(
+      """
+        |Usage of DatabaseRecordConsumer:
+        |  <database_url: url-string>
+        |  <username: string>
+        |  <password: string>
+      """.stripMargin
+    )
     System.exit(1)
   }
   private final val url = args(0)
@@ -14,7 +21,6 @@ object DatabaseRecordConsumer extends RecordConsumer {
 
   private final var connection: Connection = _
   try {
-    Class forName "com.mysql.cj.jdbc.Driver"
     connection = DriverManager.getConnection(url, username, password)
     val statement = connection.createStatement
 
@@ -27,12 +33,12 @@ object DatabaseRecordConsumer extends RecordConsumer {
         val end = start plusDays 30
 
         val stockPriceId = records getString "id"
-        val stockSymbol = records getString "symbol"
+        val stock = records getString "stock"
 
         val from = s"${start.getYear}-${start.getMonth}-${start.getDayOfMonth}"
         val to = s"${end.getYear}-${end.getMonth}-${end.getDayOfMonth}"
 
-        println(s"$from - $to \t $stockSymbol($stockPriceId)")
+        println(s"$from - $to \t $stock($stockPriceId)")
       }
 
       Thread.sleep(1000)

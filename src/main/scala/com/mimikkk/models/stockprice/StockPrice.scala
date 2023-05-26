@@ -1,4 +1,5 @@
-package com.mimikkk.models
+package com.mimikkk.models.stockprice
+
 
 import java.util.Date
 
@@ -11,9 +12,10 @@ import java.util.Date
  * @param close         Close price adjusted for splits
  * @param adjustedClose Adjusted close price adjusted for both dividends and splits
  * @param volume        The number of shares that changed hands during a given day
- * @param stockSymbol   Stock symbol
+ * @param stockId       Identifier of a stock symbol
  */
-final case class StockPrice
+
+case class StockPrice
 (
   date: Date,
   open: Float,
@@ -21,6 +23,6 @@ final case class StockPrice
   low: Float,
   close: Float,
   adjustedClose: Float,
-  volume: Float,
-  stockSymbol: String
+  volume: Int,
+  stockId: String
 )

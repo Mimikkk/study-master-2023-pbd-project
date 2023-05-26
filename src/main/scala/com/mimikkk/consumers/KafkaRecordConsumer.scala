@@ -9,7 +9,14 @@ import scala.collection.JavaConverters.{iterableAsScalaIterableConverter, mapAsJ
 
 object KafkaRecordConsumer extends RecordConsumer {
   if (args.length != 3) {
-    println("Usage: KafkaRecordConsumer <bootstrap-servers: kafka-server> <group-id: string> <topic: kafka-topic>")
+    println(
+      """
+        |Usage of KafkaRecordConsumer:
+        |  <bootstrap-server: server-string>
+        |  <group-id: string>
+        |  <topic: string>
+      """.stripMargin
+    )
     System.exit(1)
   }
 

@@ -11,7 +11,15 @@ import scala.collection.JavaConverters._
 
 object KafkaRecordProducer extends RecordProducer {
   if (args.length != 4) {
-    println("Usage: KafkaRecordProducer <dataset-parts-directory: path> <seconds-between-parts: int> <topic: kafka-topic> <bootstrap-server: kafka-server>")
+    println(
+      """
+        |Usage of KafkaRecordProducer:
+        |  <dataset-parts-directory: path-string>
+        |  <seconds-between-parts: int>
+        |  <topic: string>
+        |  <bootstrap-server: server-string>
+      """.stripMargin
+    )
     System.exit(1)
   }
 

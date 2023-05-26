@@ -1,15 +1,13 @@
 # Cloud parameters
 export BUCKET_NAME="pbd-23-dz"
 export CLUSTER_NAME=$(/usr/share/google/get_metadata_value attributes/dataproc-cluster-name)
-export HADOOP_CONF_DIR=/etc/hadoop/conf
-export HADOOP_CLASSPATH=$(hadoop classpath)
 
 export INPUT_DIRECTORY_PATH="$HOME/resources/datasets/stock-prices/parts"
 export INPUT_FILE_PATH="$HOME/resources/datasets/stock-prices/meta.csv"
 
 # Kafka parameters
 export KAFKA_PRODUCER_SLEEP_TIME=1
-export KAFKA_CONTENT_TOPIC_NAME="stock-prices"
+export KAFKA_CONTENT_TOPIC_NAME="stock-prices-records"
 export KAFKA_ANOMALY_TOPIC_NAME="stock-prices-anomalies"
 export KAFKA_BOOTSTRAP_SERVERS="${CLUSTER_NAME}-w-0:9092"
 export KAFKA_GROUP_ID="stock-prices-group"
@@ -24,6 +22,6 @@ export FLINK_DIRECTORY="$HOME/flink-1.17.1"
 
 # Anomaly parameters
 export ANOMALY_STOCK_DAYS_RANGE=7
-export ANOMALY_STOCK_PERCENT_FLUCTUATION=4
+export ANOMALY_STOCK_PERCENT_FLUCTUATION=40
 
 export PROCESSING_TYPE="historical"

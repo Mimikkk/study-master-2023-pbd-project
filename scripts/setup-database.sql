@@ -7,7 +7,10 @@ GRANT ALL ON stock_prices.* TO 'stream-user'@'%';
 USE stock_prices;
 CREATE TABLE IF NOT EXISTS stock_prices (
     window_start BIGINT NOT NULL,
-    id varchar(32) NOT NULL,
-    symbol varchar(128) NOT NULL,
-    PRIMARY KEY (window_start, id)
+    stock_id varchar(32) NOT NULL,
+    close FLOAT NOT NULL,
+    low FLOAT NOT NULL,
+    high FLOAT NOT NULL,
+    volumne INT NOT NULL,
+    PRIMARY KEY (window_start, stock_id)
 );
