@@ -87,34 +87,31 @@ object Processor {
     val username = configuration.database.username
     val password = configuration.database.password
 
-    val statementBuilder = new JdbcStatementBuilder[StockPriceRecordProcessFunction.Result] {
-      override def accept(statement: PreparedStatement, price: StockPriceRecordProcessFunction.Result): Unit = {
-        statement.setLong(1, price.start)
-        statement.setString(2, price.stockId)
-        statement.setFloat(3, price.close)
-        statement.setFloat(4, price.low)
-        statement.setFloat(5, price.high)
-        statement.setFloat(6, price.volume)
-        statement.setFloat(7, price.close)
-        statement.setFloat(8, price.low)
-        statement.setFloat(9, price.high)
-        statement.setFloat(10, price.volume)
-      }
-    }
-
-    val dbsink = DatabaseSinkFactory.create[StockPriceRecordProcessFunction.Result](
-      insertStatement,
-      statementBuilder,
-      url,
-      username,
-      password
-    )
-
     recordStream
       .keyBy(_.stockId)
       .window(TumblingEventTimeWindows of (Time days 30))
       .aggregate(new StockPriceRecordAggregator, new StockPriceRecordProcessFunction)
-      .addSink(dbsink)
+      .addSink(DatabaseSinkFactory.create[StockPriceRecordProcessFunction.Result](
+        insertStatement,
+        // Has to be verbose to ensure serialization for Spark preprocessor
+        new JdbcStatementBuilder[StockPriceRecordProcessFunction.Result] {
+          override def accept(statement: PreparedStatement, price: StockPriceRecordProcessFunction.Result): Unit = {
+            statement.setLong(1, price.start)
+            statement.setString(2, price.stockId)
+            statement.setFloat(3, price.close)
+            statement.setFloat(4, price.low)
+            statement.setFloat(5, price.high)
+            statement.setFloat(6, price.volume)
+            statement.setFloat(7, price.close)
+            statement.setFloat(8, price.low)
+            statement.setFloat(9, price.high)
+            statement.setFloat(10, price.volume)
+          }
+        },
+        url,
+        username,
+        password
+      ))
 
     val percentageFluctuation = configuration.anomaly.percentageFluctuation
     recordStream
