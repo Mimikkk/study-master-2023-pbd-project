@@ -6,7 +6,7 @@ import org.apache.flink.connector.kafka.sink.{KafkaRecordSerializationSchema, Ka
 
 object KafkaSinkFactory {
   def create(server: String, topic: String): KafkaSink[String] =
-    KafkaSink.builder()
+    KafkaSink.builder[String]()
       .setBootstrapServers(server)
       .setRecordSerializer(
         KafkaRecordSerializationSchema.builder()
