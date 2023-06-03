@@ -64,21 +64,21 @@ object Processor {
     environment.getConfig.setRestartStrategy(fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
     environment.registerCachedFile(configuration.meta, "meta-file")
 
-    val source = KafkaSource.builder[String]
-      .setBootstrapServers(configuration.kafka.server)
-      .setTopics(configuration.kafka.contentTopic)
-      .setGroupId(configuration.kafka.groupId)
-      .setStartingOffsets(OffsetsInitializer.earliest)
-      .setValueOnlyDeserializer(new SimpleStringSchema)
-      .build
+//    val source = KafkaSource.builder[String]
+//      .setBootstrapServers(configuration.kafka.server)
+//      .setTopics(configuration.kafka.contentTopic)
+//      .setGroupId(configuration.kafka.groupId)
+//      .setStartingOffsets(OffsetsInitializer.earliest)
+//      .setValueOnlyDeserializer(new SimpleStringSchema)
+//      .build
 
-    val stringStream = environment fromSource
-      (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
+//    val stringStream = environment fromSource
+//      (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
 
-    val recordStream = stringStream
-      .map(_ split ",")
-      .map(intoStockPrice)
-      .assignTimestampsAndWatermarks(StockPriceWatermarkStrategy.create())
+//    val recordStream = stringStream
+//      .map(_ split ",")
+//      .map(intoStockPrice)
+//      .assignTimestampsAndWatermarks(StockPriceWatermarkStrategy.create())
 
 //    recordStream
 //      .keyBy(_.stockId)
@@ -105,13 +105,13 @@ object Processor {
 //        )
 //      )
 
-    recordStream
-      .keyBy(_.stockId)
-      .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
-      .aggregate(new StockPriceAnomalyAggregator, new StockPriceAnomalyProcessFunction)
-      .filter(result => result.fluctuation > configuration.anomaly.percentageFluctuation)
-      .map(_.toString)
-      .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
+//    recordStream
+//      .keyBy(_.stockId)
+//      .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
+//      .aggregate(new StockPriceAnomalyAggregator, new StockPriceAnomalyProcessFunction)
+//      .filter(result => result.fluctuation > configuration.anomaly.percentageFluctuation)
+//      .map(_.toString)
+//      .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
 
     environment.execute("Stock prices processing...")
   }
