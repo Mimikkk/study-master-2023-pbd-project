@@ -109,9 +109,9 @@ object Processor {
       .keyBy(_.stockId)
       .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
       .aggregate(new StockPriceAnomalyAggregator, new StockPriceAnomalyProcessFunction)
-      .filter(result => result.fluctuation > configuration.anomaly.percentageFluctuation)
-      .map(_.toString)
-      .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
+//      .filter(result => result.fluctuation > configuration.anomaly.percentageFluctuation)
+//      .map(_.toString)
+//      .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
 
 //    environment.execute("Stock prices processing...")
   }
