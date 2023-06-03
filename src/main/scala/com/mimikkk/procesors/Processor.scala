@@ -106,11 +106,13 @@ object Processor extends java.io.Serializable {
 //      )
 
     // Makes it serializable for Spark
+    val f = configuration.anomaly.percentageFluctuation
+
     recordStream
       .keyBy(_.stockId)
       .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
       .aggregate(new StockPriceAnomalyAggregator(), new StockPriceAnomalyProcessFunction())
-      .filter(_.fluctuation > configuration.anomaly.percentageFluctuation)
+      .filter(_.fluctuation > f)
       .map(_.toString)
       .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
 

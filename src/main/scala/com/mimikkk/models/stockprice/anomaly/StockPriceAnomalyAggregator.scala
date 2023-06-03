@@ -3,7 +3,9 @@ package com.mimikkk.models.stockprice.anomaly
 import com.mimikkk.models.stockprice.StockPrice
 import org.apache.flink.api.common.functions.AggregateFunction
 
-final class StockPriceAnomalyAggregator extends AggregateFunction[StockPrice, StockPriceAnomalyAggregator.Accumulator, StockPriceAnomalyAggregator.Result] {
+final class StockPriceAnomalyAggregator extends
+  AggregateFunction[StockPrice, StockPriceAnomalyAggregator.Accumulator, StockPriceAnomalyAggregator.Result]
+  with java.io.Serializable  {
   override def createAccumulator(): Accumulator = Accumulator.empty
 
   override def add(item: StockPrice, accumulator: Accumulator): Accumulator = merge(Accumulator.from(item), accumulator)
@@ -23,7 +25,7 @@ final class StockPriceAnomalyAggregator extends AggregateFunction[StockPrice, St
 }
 
 object StockPriceAnomalyAggregator {
-  final case class Accumulator(stockId: String, min: Float, max: Float) extends Serializable
+  final case class Accumulator(stockId: String, min: Float, max: Float) extends java.io.Serializable
 
   private object Accumulator {
     def empty = new Accumulator("", 0, 0)
@@ -31,7 +33,7 @@ object StockPriceAnomalyAggregator {
     def from(item: StockPrice) = new Accumulator(item.stockId, item.low, item.high)
   }
 
-  final case class Result(stockId: String, min: Float, max: Float, fluctuation: Float) extends Serializable
+  final case class Result(stockId: String, min: Float, max: Float, fluctuation: Float) extends java.io.Serializable
 
   private object Result {
     def from(item: Accumulator) =
