@@ -1,22 +1,12 @@
 package com.mimikkk.procesors
 
-import com.mimikkk.models.stockprice.anomaly.{StockPriceAnomalyAggregator, StockPriceAnomalyProcessFunction}
-import com.mimikkk.models.stockprice.record.{StockPriceRecordAggregator, StockPriceRecordProcessFunction}
-import com.mimikkk.models.stockprice.{StockPrice, StockPriceWatermarkStrategy}
-import com.mimikkk.sinks.{DatabaseSinkFactory, KafkaSinkFactory}
-import org.apache.flink.api.common.restartstrategy.RestartStrategies._
+import com.mimikkk.sinks.KafkaSinkFactory
+import org.apache.flink.api.common.restartstrategy.RestartStrategies
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation
-import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
-import org.apache.flink.api.common.eventtime.WatermarkStrategy
-import org.apache.flink.connector.jdbc.JdbcStatementBuilder
-import org.apache.flink.connector.kafka.source.KafkaSource
-import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer
-import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
-import org.apache.flink.streaming.api.windowing.time.Time
+import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
 
-import java.sql.PreparedStatement
 import java.util.Properties
 
 object Processor {
@@ -85,7 +75,7 @@ object Processor {
 
 
     val environment = StreamExecutionEnvironment.getExecutionEnvironment
-    environment.getConfig.setRestartStrategy(fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
+    environment.getConfig.setRestartStrategy(RestartStrategies.fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
     environment.registerCachedFile(meta, "meta-file")
 
 //    val source = KafkaSource.builder[String]
