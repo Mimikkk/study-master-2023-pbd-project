@@ -143,14 +143,14 @@ object Processor {
 //        password
 //      ))
 
-    val percentageFluctuation = configuration.anomaly.percentageFluctuation
-    recordStream
-      .keyBy(_.stockId)
-      .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
-      .aggregate(new StockPriceAnomalyAggregator, new StockPriceAnomalyProcessFunction)
-      .filter(_.fluctuation > percentageFluctuation)
-      .map(_.toString)
-      .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
+//    val percentageFluctuation = configuration.anomaly.percentageFluctuation
+//    recordStream
+//      .keyBy(_.stockId)
+//      .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
+//      .aggregate(new StockPriceAnomalyAggregator, new StockPriceAnomalyProcessFunction)
+//      .filter(_.fluctuation > percentageFluctuation)
+//      .map(_.toString)
+//      .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
 
     environment.execute("Stock prices processing...")
   }
