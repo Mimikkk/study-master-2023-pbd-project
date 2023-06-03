@@ -113,7 +113,7 @@ object Processor {
 //      .map(_.toString)
 //      .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
 
-    environment.execute("Stock prices processing...")
+//    environment.execute("Stock prices processing...")
   }
 
   private val insertStatement: String =
