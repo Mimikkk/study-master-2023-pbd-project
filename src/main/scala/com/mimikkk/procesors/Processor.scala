@@ -63,6 +63,36 @@ object Processor {
       val updateStrategy: UpdateStrategy.Type = UpdateStrategy.from(args(10))
     }
 
+    val insertStatement: String =
+      """
+      INSERT INTO stock_prices (
+        window_start,
+        stock_id,
+        close,
+        low,
+        high,
+        volume
+      ) VALUES (?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE close=?, low=?, high=?, volume=?
+      """
+
+    val numberOfRetries = 5
+    val millisecondsBetweenAttempts = 5
+
+    val format = new java.text.SimpleDateFormat("yyyy-MM-dd")
+
+    def intoStockPrice = (stream: Array[String]) => StockPrice(
+      format parse stream(0),
+      stream(1).toFloat,
+      stream(2).toFloat,
+      stream(3).toFloat,
+      stream(4).toFloat,
+      stream(5).toFloat,
+      stream(6).toInt,
+      stream(7),
+    )
+
+
     val environment = StreamExecutionEnvironment.getExecutionEnvironment
     environment.getConfig.setRestartStrategy(fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
     environment.registerCachedFile(configuration.meta, "meta-file")
@@ -124,34 +154,5 @@ object Processor {
 
     environment.execute("Stock prices processing...")
   }
-
-  private val insertStatement: String =
-    """
-    INSERT INTO stock_prices (
-      window_start,
-      stock_id,
-      close,
-      low,
-      high,
-      volume
-    ) VALUES (?, ?, ?, ?, ?, ?)
-      ON DUPLICATE KEY UPDATE close=?, low=?, high=?, volume=?
-    """
-
-  private val numberOfRetries = 5
-  private val millisecondsBetweenAttempts = 5
-
-  private val format = new java.text.SimpleDateFormat("yyyy-MM-dd")
-
-  private def intoStockPrice = (stream: Array[String]) => StockPrice(
-    format parse stream(0),
-    stream(1).toFloat,
-    stream(2).toFloat,
-    stream(3).toFloat,
-    stream(4).toFloat,
-    stream(5).toFloat,
-    stream(6).toInt,
-    stream(7),
-  )
 }
 
