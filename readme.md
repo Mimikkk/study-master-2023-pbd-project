@@ -70,6 +70,10 @@ gs://goog-dataproc-initialization-actions-${REGION}/kafka/kafka.sh
 ## Scripts
 
 All scripts are located in the [scripts](./scripts) directory.
+ALl scripts (except the [setup-cluster.sh](./scripts/setup-cluster.sh)) should be used from the cwd (to ensure the loading of all required variables located in [setup-variables.sh](./scripts/setup-variables.sh)) of the project like so:
+```shell
+source ./scripts/{script_name}
+```
 
 Setup scripts:
 
@@ -86,3 +90,31 @@ Run scripts:
 - [run-consumer-kafka.sh](./scripts/run-consumer-kafka.sh) is used to run the consumer to print the data.
 - [run-producer.sh](./scripts/run-producer-kafka.sh) is used to run the producer to send the data.
 - [run-processor.sh](./scripts/run-processor.sh) is used to run the processor to process the data.
+
+## Step-by-step setup
+
+1. Create google cloud cluster on google cloud console using [setup-cluster.sh](./scripts/setup-cluster.sh).
+2. Create necessary bucket with the `${BUCKET_NAME}` in the [setup-variables.sh](./scripts/setup-variables.sh)
+3. Access ssh of master-machine in the created cluster.
+4. Download this repository onto the machine.
+5. Access the repository's directory. ex. `cd ~/pbd-2023-flink-streams`.
+6. Run setup bucket script to download dataset to the bucket using [setup-bucket.sh](./scripts/setup-bucket.sh)
+7. Run setup environment script to set up dataset download from the bucket to the master, download all updates to the
+   machine, install required sbt/scala, install required flink version, build application jars, create kafka topics, and
+   create database.
+
+After all that you should be able to run all the run scripts (remember to use them from the cwd of the project to ensure all variables are exported).
+
+To test the set-up environment, I boot up the kafka processor, consumer database, consumer kafka, producer kafka.
+```shell
+source ./scripts/run-consumer-database.sh
+```
+```shell
+source ./scripts/run-consumer-kafka.sh
+```
+```shell
+source ./scripts/run-processor.sh
+```
+```shell
+source ./scripts/run-producer-kafka.sh
+```
