@@ -15,6 +15,8 @@ import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsIni
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 
+import java.sql.PreparedStatement
+
 object Processor {
   def main(args: Array[String]): Unit = {
     if (args.length != 11) {
@@ -85,17 +87,19 @@ object Processor {
     val username = configuration.database.username
     val password = configuration.database.password
 
-    val statementBuilder:  JdbcStatementBuilder[StockPriceRecordProcessFunction.Result] = (statement, price) => {
-      statement.setLong(1, price.start)
-      statement.setString(2, price.stockId)
-      statement.setFloat(3, price.close)
-      statement.setFloat(4, price.low)
-      statement.setFloat(5, price.high)
-      statement.setFloat(6, price.volume)
-      statement.setFloat(7, price.close)
-      statement.setFloat(8, price.low)
-      statement.setFloat(9, price.high)
-      statement.setFloat(10, price.volume)
+    val statementBuilder = new JdbcStatementBuilder[StockPriceRecordProcessFunction.Result] {
+      override def accept(statement: PreparedStatement, price: StockPriceRecordProcessFunction.Result): Unit = {
+        statement.setLong(1, price.start)
+        statement.setString(2, price.stockId)
+        statement.setFloat(3, price.close)
+        statement.setFloat(4, price.low)
+        statement.setFloat(5, price.high)
+        statement.setFloat(6, price.volume)
+        statement.setFloat(7, price.close)
+        statement.setFloat(8, price.low)
+        statement.setFloat(9, price.high)
+        statement.setFloat(10, price.volume)
+      }
     }
 
     val dbsink = DatabaseSinkFactory.create[StockPriceRecordProcessFunction.Result](
@@ -121,7 +125,7 @@ object Processor {
       .map(_.toString)
       .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
 
-//    environment.execute("Stock prices processing...")
+    //    environment.execute("Stock prices processing...")
   }
 
   private val insertStatement: String =
