@@ -7,7 +7,7 @@ import com.mimikkk.sinks.{DatabaseSinkFactory, KafkaSinkFactory}
 import org.apache.flink.api.common.restartstrategy.RestartStrategies._
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation
-import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
+import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
 import org.apache.flink.api.common.eventtime.WatermarkStrategy
 import org.apache.flink.connector.kafka.source.KafkaSource
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer
@@ -105,13 +105,16 @@ object Processor {
 //        )
 //      )
 
+    // Makes it serializable for Spark
+    def filter(result: StockPriceAnomalyProcessFunction.Result) = result.fluctuation > configuration.anomaly.percentageFluctuation
+
     recordStream
       .keyBy(_.stockId)
       .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
       .aggregate(new StockPriceAnomalyAggregator, new StockPriceAnomalyProcessFunction)
-      .filter(result => result.fluctuation > configuration.anomaly.percentageFluctuation)
-//      .map(_.toString)
-//      .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
+      .filter(filter(_))
+      .map(_.toString)
+      .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
 
 //    environment.execute("Stock prices processing...")
   }
