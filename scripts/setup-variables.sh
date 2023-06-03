@@ -1,9 +1,10 @@
 # Cloud parameters
-export BUCKET_NAME="pbd-23-dz"
 export CLUSTER_NAME=$(/usr/share/google/get_metadata_value attributes/dataproc-cluster-name)
-
-export INPUT_DIRECTORY_PATH="$HOME/resources/datasets/stock-prices/parts"
+export BUCKET_NAME="pbd-23-dz"
+export HADOOP_CLASSPATH=`hadoop classpath`
+export HADOOP_CONF_DIR=/etc/hadoop/conf
 export INPUT_FILE_PATH="$HOME/resources/datasets/stock-prices/meta.csv"
+export INPUT_DIRECTORY_PATH="$HOME/resources/datasets/stock-prices/parts"
 
 # Kafka parameters
 export KAFKA_PRODUCER_SLEEP_TIME=1

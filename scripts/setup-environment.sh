@@ -12,7 +12,7 @@ unzip -j "$INPUT_DIRECTORY_PATH".zip -d "$INPUT_DIRECTORY_PATH"
 rm "$INPUT_DIRECTORY_PATH".zip
 
 wget https://dlcdn.apache.org/flink/flink-1.17.1/flink-1.17.1-bin-scala_2.12.tgz -P "$HOME"
-tar -xzf "$HOME/flink-1.17.1-bin-scala_2.12.tgz" -C "$FLINK_DIRECTORY"
+tar -xzf "$HOME/flink-1.17.1-bin-scala_2.12.tgz" -C "$HOME"
 rm "$HOME/flink-1.17.1-bin-scala_2.12.tgz"
 sbt -J-Xms2048m -J-Xmx2048m clean assembly
 

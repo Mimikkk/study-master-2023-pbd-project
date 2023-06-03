@@ -2,7 +2,7 @@ source ./scripts/setup-variables.sh
 
 "$FLINK_DIRECTORY"/bin/flink run \
   -m yarn-cluster -p 2 -yjm 1024m -ytm 2048m \
-  -c com.mimikkk.processors.Processor "$(pwd)"/target/scala-2.12/*.jar \
+  -c com.mimikkk.procesors.Processor "$(pwd)"/target/scala-2.12/*.jar \
   "$INPUT_FILE_PATH" \
   "$KAFKA_BOOTSTRAP_SERVERS" \
   "$KAFKA_GROUP_ID" \
@@ -12,4 +12,5 @@ source ./scripts/setup-variables.sh
   "$JDBC_USERNAME" \
   "$JDBC_PASSWORD" \
   "$ANOMALY_STOCK_DAYS_RANGE" \
-  "$ANOMALY_STOCK_PERCENT_FLUCTUATION"
+  "$ANOMALY_STOCK_PERCENT_FLUCTUATION" \
+  "historical"
