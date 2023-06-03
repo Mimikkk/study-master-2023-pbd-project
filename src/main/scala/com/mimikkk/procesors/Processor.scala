@@ -18,7 +18,6 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
 
 import java.sql.PreparedStatement
 import java.util.Properties
-import scala.collection.immutable.HashMap.EmptyHashMap.split
 
 object Processor {
   def main(args: Array[String]): Unit = {
