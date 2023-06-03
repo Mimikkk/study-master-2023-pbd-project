@@ -39,83 +39,83 @@ object Processor {
       System.exit(1)
     }
 
-    final object configuration {
-      val meta: String = args(0)
-
-      final object kafka {
-        val server: String = args(1)
-        val groupId: String = args(2)
-        val contentTopic: String = args(3)
-        val anomalyTopic: String = args(4)
-      }
-
-      final object database {
-        val url: String = args(5)
-        val username: String = args(6)
-        val password: String = args(7)
-      }
-
-      final object anomaly {
-        val dayRange: Int = args(8).toInt
-        val percentageFluctuation: Float = args(9).toFloat / 100
-      }
-
-      val updateStrategy: UpdateStrategy.Type = UpdateStrategy.from(args(10))
-    }
-
-    val insertStatement: String =
-      """
-      INSERT INTO stock_prices (
-        window_start,
-        stock_id,
-        close,
-        low,
-        high,
-        volume
-      ) VALUES (?, ?, ?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE close=?, low=?, high=?, volume=?
-      """
-
-    val numberOfRetries = 5
-    val millisecondsBetweenAttempts = 5
-
-    val format = new java.text.SimpleDateFormat("yyyy-MM-dd")
-
-    def intoStockPrice = (stream: Array[String]) => StockPrice(
-      format parse stream(0),
-      stream(1).toFloat,
-      stream(2).toFloat,
-      stream(3).toFloat,
-      stream(4).toFloat,
-      stream(5).toFloat,
-      stream(6).toInt,
-      stream(7),
-    )
-
-
+//    final object configuration {
+//      val meta: String = args(0)
+//
+//      final object kafka {
+//        val server: String = args(1)
+//        val groupId: String = args(2)
+//        val contentTopic: String = args(3)
+//        val anomalyTopic: String = args(4)
+//      }
+//
+//      final object database {
+//        val url: String = args(5)
+//        val username: String = args(6)
+//        val password: String = args(7)
+//      }
+//
+//      final object anomaly {
+//        val dayRange: Int = args(8).toInt
+//        val percentageFluctuation: Float = args(9).toFloat / 100
+//      }
+//
+//      val updateStrategy: UpdateStrategy.Type = UpdateStrategy.from(args(10))
+//    }
+//
+//    val insertStatement: String =
+//      """
+//      INSERT INTO stock_prices (
+//        window_start,
+//        stock_id,
+//        close,
+//        low,
+//        high,
+//        volume
+//      ) VALUES (?, ?, ?, ?, ?, ?)
+//        ON DUPLICATE KEY UPDATE close=?, low=?, high=?, volume=?
+//      """
+//
+//    val numberOfRetries = 5
+//    val millisecondsBetweenAttempts = 5
+//
+//    val format = new java.text.SimpleDateFormat("yyyy-MM-dd")
+//
+//    def intoStockPrice = (stream: Array[String]) => StockPrice(
+//      format parse stream(0),
+//      stream(1).toFloat,
+//      stream(2).toFloat,
+//      stream(3).toFloat,
+//      stream(4).toFloat,
+//      stream(5).toFloat,
+//      stream(6).toInt,
+//      stream(7),
+//    )
+//
+//
     val environment = StreamExecutionEnvironment.getExecutionEnvironment
-    environment.getConfig.setRestartStrategy(fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
-    environment.registerCachedFile(configuration.meta, "meta-file")
-
-    val source = KafkaSource.builder[String]
-      .setBootstrapServers(configuration.kafka.server)
-      .setTopics(configuration.kafka.contentTopic)
-      .setGroupId(configuration.kafka.groupId)
-      .setStartingOffsets(OffsetsInitializer.earliest)
-      .setValueOnlyDeserializer(new SimpleStringSchema)
-      .build
-
-    val stringStream = environment fromSource
-      (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
-
-    val recordStream = stringStream
-      .map(_ split ",")
-      .map(intoStockPrice)
-      .assignTimestampsAndWatermarks(StockPriceWatermarkStrategy.create())
-
-    val url = configuration.database.url
-    val username = configuration.database.username
-    val password = configuration.database.password
+    environment.getConfig.setRestartStrategy(fixedDelayRestart(5, 100))
+//    environment.registerCachedFile(configuration.meta, "meta-file")
+//
+//    val source = KafkaSource.builder[String]
+//      .setBootstrapServers(configuration.kafka.server)
+//      .setTopics(configuration.kafka.contentTopic)
+//      .setGroupId(configuration.kafka.groupId)
+//      .setStartingOffsets(OffsetsInitializer.earliest)
+//      .setValueOnlyDeserializer(new SimpleStringSchema)
+//      .build
+//
+//    val stringStream = environment fromSource
+//      (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
+//
+//    val recordStream = stringStream
+//      .map(_ split ",")
+//      .map(intoStockPrice)
+//      .assignTimestampsAndWatermarks(StockPriceWatermarkStrategy.create())
+//
+//    val url = configuration.database.url
+//    val username = configuration.database.username
+//    val password = configuration.database.password
 
 //    recordStream
 //      .keyBy(_.stockId)
