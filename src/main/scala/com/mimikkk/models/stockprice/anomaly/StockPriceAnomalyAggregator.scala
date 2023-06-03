@@ -23,7 +23,7 @@ final class StockPriceAnomalyAggregator extends AggregateFunction[StockPrice, St
 }
 
 object StockPriceAnomalyAggregator {
-  final case class Accumulator(stockId: String, min: Float, max: Float)
+  final case class Accumulator(stockId: String, min: Float, max: Float) extends Serializable
 
   private object Accumulator {
     def empty = new Accumulator("", 0, 0)
@@ -31,7 +31,7 @@ object StockPriceAnomalyAggregator {
     def from(item: StockPrice) = new Accumulator(item.stockId, item.low, item.high)
   }
 
-  final case class Result(stockId: String, min: Float, max: Float, fluctuation: Float)
+  final case class Result(stockId: String, min: Float, max: Float, fluctuation: Float) extends Serializable
 
   private object Result {
     def from(item: Accumulator) =
