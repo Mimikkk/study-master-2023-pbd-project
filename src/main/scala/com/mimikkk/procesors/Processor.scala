@@ -80,33 +80,32 @@ object Processor {
       .map(intoStockPrice)
       .assignTimestampsAndWatermarks(StockPriceWatermarkStrategy.create())
 
-    //    recordStream
-    //      .keyBy(_.stockId)
-    //      .window(TumblingEventTimeWindows of (Time days 30))
-    //      .aggregate(new StockPriceRecordAggregator, new StockPriceRecordProcessFunction)
-    //      .addSink(
-    //        DatabaseSinkFactory.create[StockPriceRecordProcessFunction.Result](
-    //          insertStatement,
-    //          (statement, price) => {
-    //            statement.setLong(1, price.start)
-    //            statement.setString(2, price.stockId)
-    //            statement.setFloat(3, price.close)
-    //            statement.setFloat(4, price.low)
-    //            statement.setFloat(5, price.high)
-    //            statement.setFloat(6, price.volume)
-    //            statement.setFloat(7, price.close)
-    //            statement.setFloat(8, price.low)
-    //            statement.setFloat(9, price.high)
-    //            statement.setFloat(10, price.volume)
-    //          },
-    //          configuration.database.url,
-    //          configuration.database.username,
-    //          configuration.database.password
-    //        )
-    //      )
+    recordStream
+      .keyBy(_.stockId)
+      .window(TumblingEventTimeWindows of (Time days 30))
+      .aggregate(new StockPriceRecordAggregator, new StockPriceRecordProcessFunction)
+      .addSink(
+        DatabaseSinkFactory.create[StockPriceRecordProcessFunction.Result](
+          insertStatement,
+          (statement, price) => {
+            statement.setLong(1, price.start)
+            statement.setString(2, price.stockId)
+            statement.setFloat(3, price.close)
+            statement.setFloat(4, price.low)
+            statement.setFloat(5, price.high)
+            statement.setFloat(6, price.volume)
+            statement.setFloat(7, price.close)
+            statement.setFloat(8, price.low)
+            statement.setFloat(9, price.high)
+            statement.setFloat(10, price.volume)
+          },
+          configuration.database.url,
+          configuration.database.username,
+          configuration.database.password
+        )
+      )
 
     val percentageFluctuation = configuration.anomaly.percentageFluctuation
-
     recordStream
       .keyBy(_.stockId)
       .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
