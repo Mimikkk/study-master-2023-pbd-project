@@ -14,23 +14,13 @@ import org.apache.flink.connector.kafka.source.KafkaSource
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
 
 import java.sql.PreparedStatement
+import java.util.Properties
+import scala.collection.immutable.HashMap.EmptyHashMap.split
 
 object Processor {
-  val format = new java.text.SimpleDateFormat("yyyy-MM-dd")
-
-  private def intoStockPrice = (stream: Array[String]) => StockPrice(
-    format parse stream(0),
-    stream(1).toFloat,
-    stream(2).toFloat,
-    stream(3).toFloat,
-    stream(4).toFloat,
-    stream(5).toFloat,
-    stream(6).toInt,
-    stream(7),
-  )
-
   def main(args: Array[String]): Unit = {
     if (args.length != 11) {
       println(
@@ -51,6 +41,19 @@ object Processor {
       )
       System.exit(1)
     }
+
+    val format = new java.text.SimpleDateFormat("yyyy-MM-dd")
+
+    def intoStockPrice = (stream: Array[String]) => StockPrice(
+      format parse stream(0),
+      stream(1).toFloat,
+      stream(2).toFloat,
+      stream(3).toFloat,
+      stream(4).toFloat,
+      stream(5).toFloat,
+      stream(6).toInt,
+      stream(7),
+    )
 
     val meta = args(0)
     val server = args(1)
@@ -86,23 +89,36 @@ object Processor {
     environment.getConfig.setRestartStrategy(fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
     environment.registerCachedFile(meta, "meta-file")
 
-    val source = KafkaSource.builder[String]
-      .setBootstrapServers(server)
-      .setTopics(contentTopic)
-      .setGroupId(groupId)
-      .setStartingOffsets(OffsetsInitializer.earliest)
-      .setValueOnlyDeserializer(new SimpleStringSchema)
-      .build
+//    val source = KafkaSource.builder[String]
+//      .setBootstrapServers(server)
+//      .setTopics(contentTopic)
+//      .setGroupId(groupId)
+//      .setStartingOffsets(OffsetsInitializer.earliest)
+//      .setValueOnlyDeserializer(new SimpleStringSchema)
+//      .build
 
-    val stringStream = environment fromSource
-      (source, WatermarkStrategy.noWatermarks(), s"Kafka ${contentTopic} Source")
+    val properties = new Properties()
+    properties.setProperty("bootstrap.servers", server)
+    properties.setProperty("group.id", groupId)
+    val inputStream = environment.addSource(
+      new FlinkKafkaConsumer[String](
+        anomalyTopic,
+        new SimpleStringSchema(),
+        properties
+      )
+    )
 
-    val recordStream = stringStream
-      .map(_ split ",")
-      .map(intoStockPrice)
-      .assignTimestampsAndWatermarks(StockPriceWatermarkStrategy.create())
-      .map(_.toString)
-      .sinkTo(KafkaSinkFactory.create(server, anomalyTopic))
+    inputStream.map(_.toString).sinkTo(KafkaSinkFactory.create(server, anomalyTopic))
+
+//    val stringStream = environment fromSource
+//      (inputStream, WatermarkStrategy.noWatermarks(), s"Kafka ${contentTopic} Source")
+
+//    val recordStream = stringStream
+//      .map(_ split ",")
+//      .map(intoStockPrice)
+//      .assignTimestampsAndWatermarks(StockPriceWatermarkStrategy.create())
+//      .map(_.toString)
+//      .sinkTo(KafkaSinkFactory.create(server, anomalyTopic))
 
 //    recordStream
 //      .keyBy(_.stockId)
