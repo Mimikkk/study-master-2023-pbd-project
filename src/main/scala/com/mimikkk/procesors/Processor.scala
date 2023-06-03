@@ -101,6 +101,8 @@ object Processor {
       .map(_ split ",")
       .map(intoStockPrice)
       .assignTimestampsAndWatermarks(StockPriceWatermarkStrategy.create())
+      .map(_.toString)
+      .sinkTo(KafkaSinkFactory.create(server, anomalyTopic))
 
 //    recordStream
 //      .keyBy(_.stockId)
@@ -128,13 +130,13 @@ object Processor {
 //        password
 //      ))
 
-    recordStream
-      .keyBy(_.stockId)
-      .window(TumblingEventTimeWindows of (Time days dayRange))
-      .aggregate(new StockPriceAnomalyAggregator, new StockPriceAnomalyProcessFunction)
-      .filter(_.fluctuation > percentageFluctuation)
-      .map(_.toString)
-      .sinkTo(KafkaSinkFactory.create(server, anomalyTopic))
+//    recordStream
+//      .keyBy(_.stockId)
+//      .window(TumblingEventTimeWindows of (Time days dayRange))
+//      .aggregate(new StockPriceAnomalyAggregator, new StockPriceAnomalyProcessFunction)
+//      .filter(_.fluctuation > percentageFluctuation)
+//      .map(_.toString)
+//      .sinkTo(KafkaSinkFactory.create(server, anomalyTopic))
 
     environment.execute("Stock prices processing...")
   }
