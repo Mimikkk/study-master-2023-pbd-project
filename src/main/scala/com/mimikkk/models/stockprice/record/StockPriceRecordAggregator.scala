@@ -3,7 +3,8 @@ package com.mimikkk.models.stockprice.record
 import com.mimikkk.models.stockprice.StockPrice
 import org.apache.flink.api.common.functions.AggregateFunction
 
-final class StockPriceRecordAggregator extends AggregateFunction[StockPrice, StockPriceRecordAggregator.Accumulator, StockPriceRecordAggregator.Result] {
+final class StockPriceRecordAggregator
+  extends AggregateFunction[StockPrice, StockPriceRecordAggregator.Accumulator, StockPriceRecordAggregator.Result] {
   override def createAccumulator(): Accumulator = Accumulator.empty
 
   override def add(item: StockPrice, accumulator: Accumulator): Accumulator = merge(Accumulator.from(item), accumulator)

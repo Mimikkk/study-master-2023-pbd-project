@@ -14,7 +14,7 @@ import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsIni
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 
-object Processor extends java.io.Serializable {
+object Processor {
   def main(args: Array[String]): Unit = {
     if (args.length != 11) {
       println(
@@ -36,23 +36,23 @@ object Processor extends java.io.Serializable {
       System.exit(1)
     }
 
-    final object configuration {
+    final object configuration extends Serializable  {
       val meta: String = args(0)
 
-      final object kafka {
+      final object kafka extends Serializable  {
         val server: String = args(1)
         val groupId: String = args(2)
         val contentTopic: String = args(3)
         val anomalyTopic: String = args(4)
       }
 
-      final object database {
+      final object database extends Serializable  {
         val url: String = args(5)
         val username: String = args(6)
         val password: String = args(7)
       }
 
-      final object anomaly {
+      final object anomaly extends Serializable {
         val dayRange: Int = args(8).toInt
         val percentageFluctuation: Float = args(9).toFloat / 100
       }
@@ -80,43 +80,41 @@ object Processor extends java.io.Serializable {
       .map(intoStockPrice)
       .assignTimestampsAndWatermarks(StockPriceWatermarkStrategy.create())
 
-//    recordStream
-//      .keyBy(_.stockId)
-//      .window(TumblingEventTimeWindows of (Time days 30))
-//      .aggregate(new StockPriceRecordAggregator, new StockPriceRecordProcessFunction)
-//      .addSink(
-//        DatabaseSinkFactory.create[StockPriceRecordProcessFunction.Result](
-//          insertStatement,
-//          (statement, price) => {
-//            statement.setLong(1, price.start)
-//            statement.setString(2, price.stockId)
-//            statement.setFloat(3, price.close)
-//            statement.setFloat(4, price.low)
-//            statement.setFloat(5, price.high)
-//            statement.setFloat(6, price.volume)
-//            statement.setFloat(7, price.close)
-//            statement.setFloat(8, price.low)
-//            statement.setFloat(9, price.high)
-//            statement.setFloat(10, price.volume)
-//          },
-//          configuration.database.url,
-//          configuration.database.username,
-//          configuration.database.password
-//        )
-//      )
+    //    recordStream
+    //      .keyBy(_.stockId)
+    //      .window(TumblingEventTimeWindows of (Time days 30))
+    //      .aggregate(new StockPriceRecordAggregator, new StockPriceRecordProcessFunction)
+    //      .addSink(
+    //        DatabaseSinkFactory.create[StockPriceRecordProcessFunction.Result](
+    //          insertStatement,
+    //          (statement, price) => {
+    //            statement.setLong(1, price.start)
+    //            statement.setString(2, price.stockId)
+    //            statement.setFloat(3, price.close)
+    //            statement.setFloat(4, price.low)
+    //            statement.setFloat(5, price.high)
+    //            statement.setFloat(6, price.volume)
+    //            statement.setFloat(7, price.close)
+    //            statement.setFloat(8, price.low)
+    //            statement.setFloat(9, price.high)
+    //            statement.setFloat(10, price.volume)
+    //          },
+    //          configuration.database.url,
+    //          configuration.database.username,
+    //          configuration.database.password
+    //        )
+    //      )
 
-    // Makes it serializable for Spark
-    val f = configuration.anomaly.percentageFluctuation
 
     recordStream
       .keyBy(_.stockId)
       .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
-      .aggregate(new StockPriceAnomalyAggregator(), new StockPriceAnomalyProcessFunction())
-      .filter(_.fluctuation > f)
+      .aggregate(new StockPriceAnomalyAggregator, new StockPriceAnomalyProcessFunction)
+      .filter(_.fluctuation > configuration.anomaly.percentageFluctuation)
       .map(_.toString)
       .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
 
-//    environment.execute("Stock prices processing...")
+    //    environment.execute("Stock prices processing...")
   }
 
   private val insertStatement: String =

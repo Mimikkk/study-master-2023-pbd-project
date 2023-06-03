@@ -5,8 +5,7 @@ import org.apache.flink.streaming.api.windowing.windows.TimeWindow
 import org.apache.flink.util.Collector
 
 final class StockPriceAnomalyProcessFunction extends
-  ProcessWindowFunction[StockPriceAnomalyAggregator.Result, StockPriceAnomalyProcessFunction.Result, String, TimeWindow]
-  with java.io.Serializable {
+  ProcessWindowFunction[StockPriceAnomalyAggregator.Result, StockPriceAnomalyProcessFunction.Result, String, TimeWindow] {
   override def process(stockId: String, context: Context, iterable: Iterable[StockPriceAnomalyAggregator.Result], collector: Collector[Result]): Unit =
     iterable foreach (anomaly => collector collect Result(
       context.window.getStart,
