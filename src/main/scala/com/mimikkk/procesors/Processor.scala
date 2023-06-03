@@ -14,7 +14,7 @@ import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsIni
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 
-object Processor {
+object Processor extends Serializable {
   def main(args: Array[String]): Unit = {
     if (args.length != 11) {
       println(
