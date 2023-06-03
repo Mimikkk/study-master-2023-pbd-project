@@ -70,7 +70,9 @@ gs://goog-dataproc-initialization-actions-${REGION}/kafka/kafka.sh
 ## Scripts
 
 All scripts are located in the [scripts](./scripts) directory.
-ALl scripts (except the [setup-cluster.sh](./scripts/setup-cluster.sh)) should be used from the cwd (to ensure the loading of all required variables located in [setup-variables.sh](./scripts/setup-variables.sh)) of the project like so:
+ALl scripts (except the [setup-cluster.sh](./scripts/setup-cluster.sh)) should be used from the cwd (to ensure the
+loading of all required variables located in [setup-variables.sh](./scripts/setup-variables.sh)) of the project like so:
+
 ```shell
 source ./scripts/{script_name}
 ```
@@ -81,6 +83,7 @@ Setup scripts:
 - [setup-environment.sh](./scripts/setup-environment.sh) is used to set up the environment.
 - [setup-cluster.sh](./scripts/setup-cluster.sh) is used to set up the cluster.
 - [setup-database.sql](./scripts/setup-database.sql) is used to set up the database.
+- [setup-database-unsafe.sh](./scripts/setup-database-unsafe.sh) is used to set up the database for preview purposes.
 - [setup-bucket.sh](./scripts/setup-bucket.sh) is used to set up the bucket with the data.
 
 Run scripts:
@@ -94,27 +97,41 @@ Run scripts:
 ## Step-by-step setup
 
 1. Create google cloud cluster on google cloud console using [setup-cluster.sh](./scripts/setup-cluster.sh).
-2. Create necessary bucket with the name as the `${BUCKET_NAME}` variable defined in the [setup-variables.sh](./scripts/setup-variables.sh).
-3. Access ssh of master-machine in the created cluster (should be in the dataproc menu under the cluster view in the virtual-machine tab named as `${CLUSTER_NAME}-m`).
-4. Download this repository onto the machine.
-5. Access the repository's directory. ex. `cd ~/pbd-2023-flink-streams`.
-6. Run setup bucket script to download dataset to the bucket using [setup-bucket.sh](./scripts/setup-bucket.sh).
-7. Run setup environment script to set up dataset download from the bucket to the master, download all updates to the
-   machine, install required sbt/scala, install required flink version, build application jars, create kafka topics, and
-   create database.
+2. Create necessary bucket with the name as the `${BUCKET_NAME}` variable defined in
+   the [setup-variables.sh](./scripts/setup-variables.sh).
+3. Create necessary mysql instance with the google cloud (Sql menu / create instance). Or skip and use unsafe
+   current host with [setup-database-unsafe.sh](./scripts/setup-database-unsafe.sh), goto step 6.
+4. Create connection to the cluster master vm.
+5. Connect sql instance to the cluster master vm.
+6. Run database setup query `mysql -h sql_ip -p < ./scripts/setup-database.sql`.
+7. Access ssh of master-machine in the created cluster (should be in the dataproc menu under the cluster view in the
+   virtual-machine tab named as `${CLUSTER_NAME}-m`).
+8. Download this repository onto the machine.
+9. Access the repository's directory. ex. `cd ~/pbd-2023-flink-streams`.
+10. Run setup bucket script to download dataset to the bucket using [setup-bucket.sh](./scripts/setup-bucket.sh).
+11. Run setup environment script using [setup-environment.sh](./scripts/setup-environment.sh) to set up dataset download
+    from the bucket to the master, download all updates to the
+    machine, install required sbt/scala, install required flink version, build application jars, create kafka topics,
+    and
+    create database.
 
-After all that you should be able to run all the run scripts (remember to use them from the cwd of the project to ensure all variables are exported).
+After all that you should be able to run all the run scripts (remember to use them from the cwd of the project to ensure
+all variables are exported).
 
 To test the set-up environment, I boot up the kafka processor, consumer database, consumer kafka, producer kafka.
+
 ```shell
 source ./scripts/run-consumer-database.sh
 ```
+
 ```shell
 source ./scripts/run-consumer-kafka.sh
 ```
+
 ```shell
 source ./scripts/run-processor.sh
 ```
+
 ```shell
 source ./scripts/run-producer-kafka.sh
 ```

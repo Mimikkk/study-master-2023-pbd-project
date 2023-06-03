@@ -28,5 +28,3 @@ kafka-topics.sh \
   --replication-factor 1 \
   --partitions 1 \
   --topic "$KAFKA_CONTENT_TOPIC_NAME"
-
-mysql -u root -p < setup-database.sql
