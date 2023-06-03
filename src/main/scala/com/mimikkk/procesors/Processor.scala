@@ -111,8 +111,8 @@ object Processor extends java.io.Serializable {
     recordStream
       .keyBy(_.stockId)
       .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
-      .aggregate(new StockPriceAnomalyAggregator, new StockPriceAnomalyProcessFunction)
-//      .filter(filter)
+      .aggregate(new StockPriceAnomalyAggregator(), new StockPriceAnomalyProcessFunction())
+      .filter(filter)
       .map(_.toString)
       .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
 
