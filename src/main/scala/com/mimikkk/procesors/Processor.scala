@@ -9,6 +9,7 @@ import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
 import org.apache.flink.api.common.eventtime.WatermarkStrategy
+import org.apache.flink.connector.jdbc.JdbcStatementBuilder
 import org.apache.flink.connector.kafka.source.KafkaSource
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
@@ -84,20 +85,22 @@ object Processor {
     val username = configuration.database.username
     val password = configuration.database.password
 
+    val statementBuilder:  JdbcStatementBuilder[StockPriceRecordProcessFunction.Result] = (statement, price) => {
+      statement.setLong(1, price.start)
+      statement.setString(2, price.stockId)
+      statement.setFloat(3, price.close)
+      statement.setFloat(4, price.low)
+      statement.setFloat(5, price.high)
+      statement.setFloat(6, price.volume)
+      statement.setFloat(7, price.close)
+      statement.setFloat(8, price.low)
+      statement.setFloat(9, price.high)
+      statement.setFloat(10, price.volume)
+    }
+
     val dbsink = DatabaseSinkFactory.create[StockPriceRecordProcessFunction.Result](
       insertStatement,
-      (statement, price) => {
-        statement.setLong(1, price.start)
-        statement.setString(2, price.stockId)
-        statement.setFloat(3, price.close)
-        statement.setFloat(4, price.low)
-        statement.setFloat(5, price.high)
-        statement.setFloat(6, price.volume)
-        statement.setFloat(7, price.close)
-        statement.setFloat(8, price.low)
-        statement.setFloat(9, price.high)
-        statement.setFloat(10, price.volume)
-      },
+      statementBuilder,
       url,
       username,
       password
