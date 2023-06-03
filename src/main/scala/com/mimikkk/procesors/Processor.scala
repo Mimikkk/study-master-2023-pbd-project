@@ -80,6 +80,10 @@ object Processor {
       .map(intoStockPrice)
       .assignTimestampsAndWatermarks(StockPriceWatermarkStrategy.create())
 
+    val url = configuration.database.url
+    val username = configuration.database.username
+    val password = configuration.database.password
+
     recordStream
       .keyBy(_.stockId)
       .window(TumblingEventTimeWindows of (Time days 30))
@@ -99,9 +103,9 @@ object Processor {
             statement.setFloat(9, price.high)
             statement.setFloat(10, price.volume)
           },
-          configuration.database.url,
-          configuration.database.username,
-          configuration.database.password
+          url,
+          username,
+          password
         )
       )
 
