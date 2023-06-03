@@ -94,11 +94,11 @@ Run scripts:
 ## Step-by-step setup
 
 1. Create google cloud cluster on google cloud console using [setup-cluster.sh](./scripts/setup-cluster.sh).
-2. Create necessary bucket with the `${BUCKET_NAME}` in the [setup-variables.sh](./scripts/setup-variables.sh)
-3. Access ssh of master-machine in the created cluster.
+2. Create necessary bucket with the name as the `${BUCKET_NAME}` variable defined in the [setup-variables.sh](./scripts/setup-variables.sh).
+3. Access ssh of master-machine in the created cluster (should be in the dataproc menu under the cluster view in the virtual-machine tab named as `${CLUSTER_NAME}-m`).
 4. Download this repository onto the machine.
 5. Access the repository's directory. ex. `cd ~/pbd-2023-flink-streams`.
-6. Run setup bucket script to download dataset to the bucket using [setup-bucket.sh](./scripts/setup-bucket.sh)
+6. Run setup bucket script to download dataset to the bucket using [setup-bucket.sh](./scripts/setup-bucket.sh).
 7. Run setup environment script to set up dataset download from the bucket to the master, download all updates to the
    machine, install required sbt/scala, install required flink version, build application jars, create kafka topics, and
    create database.
