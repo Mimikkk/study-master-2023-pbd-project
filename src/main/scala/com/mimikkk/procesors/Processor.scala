@@ -36,23 +36,23 @@ object Processor {
       System.exit(1)
     }
 
-    final object configuration extends Serializable  {
+    final object configuration {
       val meta: String = args(0)
 
-      final object kafka extends Serializable  {
+      final object kafka {
         val server: String = args(1)
         val groupId: String = args(2)
         val contentTopic: String = args(3)
         val anomalyTopic: String = args(4)
       }
 
-      final object database extends Serializable  {
+      final object database {
         val url: String = args(5)
         val username: String = args(6)
         val password: String = args(7)
       }
 
-      final object anomaly extends Serializable {
+      final object anomaly {
         val dayRange: Int = args(8).toInt
         val percentageFluctuation: Float = args(9).toFloat / 100
       }
@@ -105,12 +105,13 @@ object Processor {
     //        )
     //      )
 
+    val percentageFluctuation = configuration.anomaly.percentageFluctuation
 
     recordStream
       .keyBy(_.stockId)
       .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
       .aggregate(new StockPriceAnomalyAggregator, new StockPriceAnomalyProcessFunction)
-      .filter(_.fluctuation > configuration.anomaly.percentageFluctuation)
+      .filter(_.fluctuation > percentageFluctuation)
       .map(_.toString)
       .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
 
