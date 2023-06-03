@@ -30,7 +30,7 @@ object Processor {
            |  <database-password: string>
            |  <anomaly-day-range: day-count>
            |  <anomaly-percentage-fluctuation: int-percentage>
-           |  <update-strategy: One of '${UpdateStrategy.values mkString ','}'>
+           |  <update-strategy: One of '${UpdateStrategy.values mkString ", "}'>
         """.stripMargin
       )
       System.exit(1)

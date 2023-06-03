@@ -10,7 +10,7 @@ final class StockPriceWatermarkStrategy extends WatermarkStrategyBase[StockPrice
 
   override def createTimestampAssigner(context: TimestampAssignerSupplier.Context) = new TimestampAssigner()
 
-  private final class WatermarkGenerator extends WatermarkGeneratorBase[StockPrice] {
+  final class WatermarkGenerator extends WatermarkGeneratorBase[StockPrice] {
     private val maxOutOfOrderSeconds = 24 * 60 * 60 * 1000 // 24 hours
     private var maxTimestamp: Long = _
 
@@ -23,7 +23,7 @@ final class StockPriceWatermarkStrategy extends WatermarkStrategyBase[StockPrice
     }
   }
 
-  private final class TimestampAssigner extends TimestampAssignerBase[StockPrice] {
+  final class TimestampAssigner extends TimestampAssignerBase[StockPrice] {
     override def extractTimestamp(model: StockPrice, long: Long): Long = model.timestamp
   }
 }
