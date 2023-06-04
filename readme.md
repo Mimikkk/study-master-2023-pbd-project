@@ -91,8 +91,8 @@ Run scripts:
 - [run-consumer-database.sh](./scripts/run-consumer-database.sh) is used to run the consumer to store the data in the
   database.
 - [run-consumer-kafka.sh](./scripts/run-consumer-kafka.sh) is used to run the consumer to print the data.
-- [run-producer.sh](./scripts/run-producer-kafka.sh) is used to run the producer to send the data.
-- [run-processor.sh](./scripts/run-processor.sh) is used to run the processor to process the data.
+- [run-producer-kafka.sh](./scripts/run-producer-kafka.sh) is used to run the producer to send the data.
+- [run-processor-kafka.sh](./scripts/run-processor-kafka.sh) is used to run the processor to process the data.
 
 ## Step-by-step setup
 
@@ -129,7 +129,7 @@ source ./scripts/run-consumer-kafka.sh
 ```
 
 ```shell
-source ./scripts/run-processor.sh
+source ./scripts/run-processor-kafka.sh
 ```
 
 ```shell
