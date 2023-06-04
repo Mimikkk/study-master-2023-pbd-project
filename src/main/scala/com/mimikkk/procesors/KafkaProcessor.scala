@@ -73,20 +73,20 @@ object KafkaProcessor extends Processor {
 
   private final val format = new SimpleDateFormat("yyyy-MM-dd")
 
-  private final val environment = StreamExecutionEnvironment.createLocalEnvironment(1)
+  private final val environment = StreamExecutionEnvironment.getExecutionEnvironment
   environment.getConfig.setRestartStrategy(fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
   environment.registerCachedFile(configuration.meta, StockMeta.name)
 
-//  private final val source = KafkaSource.builder[String]
-//    .setBootstrapServers(configuration.kafka.server)
-//    .setTopics(configuration.kafka.contentTopic)
-//    .setGroupId(configuration.kafka.groupId)
-//    .setStartingOffsets(OffsetsInitializer.earliest)
-//    .setValueOnlyDeserializer(new SimpleStringSchema)
-//    .build
+  //  private final val source = KafkaSource.builder[String]
+  //    .setBootstrapServers(configuration.kafka.server)
+  //    .setTopics(configuration.kafka.contentTopic)
+  //    .setGroupId(configuration.kafka.groupId)
+  //    .setStartingOffsets(OffsetsInitializer.earliest)
+  //    .setValueOnlyDeserializer(new SimpleStringSchema)
+  //    .build
 
-//  private final val stringStream = environment fromSource
-//    (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
+  //  private final val stringStream = environment fromSource
+  //    (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
 
   println("hh")
   val properties = new Properties()
@@ -97,21 +97,17 @@ object KafkaProcessor extends Processor {
   private final val recordStream = stringStream
     .map(_ split ",")
     .filter(_.length == 8)
-    .map(stream => {
-      println("stream(0): " + stream mkString ", ")
-
-      StockPrice(
-        format parse stream(0),
-        stream(1).toFloat,
-        stream(2).toFloat,
-        stream(3).toFloat,
-        stream(4).toFloat,
-        stream(5).toFloat,
-        stream(6).toInt,
-        stream(7),
-      )
-    })
-    .assignTimestampsAndWatermarks(StockPriceWatermarkStrategy.create())
+    .map(stream => StockPrice(
+      format parse stream(0),
+      stream(1).toFloat,
+      stream(2).toFloat,
+      stream(3).toFloat,
+      stream(4).toFloat,
+      stream(5).toFloat,
+      stream(6).toInt,
+      stream(7),
+    ))
+    .assignTimestampsAndWatermarks(new StockPriceWatermarkStrategy)
 
   private final val url = configuration.database.url
   private final val username = configuration.database.username
@@ -140,6 +136,7 @@ object KafkaProcessor extends Processor {
   recordStream
     .keyBy(_.stockId)
     .window(TumblingEventTimeWindows of (Time days 30))
+    .trigger(ContinuousProcessingTimeTrigger of every)
     .aggregate(new StockPriceRecordAggregator, new StockPriceRecordProcessFunction)
     .map(new StockPriceRecordEntitleFunction)
     .addSink(DatabaseSinkFactory.create[StockPriceRecordEntitleFunction.Result](

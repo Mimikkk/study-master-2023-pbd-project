@@ -31,11 +31,11 @@ object KafkaRecordProducer extends RecordProducer {
   }
 
   private final val properties = new Properties {
-//    putAll(Map(
-//      "bootstrap.servers" -> configuration.server,
-//      "key.serializer" -> "org.apache.kafka.common.serialization.StringSerializer",
-//      "value.serializer" -> "org.apache.kafka.common.serialization.StringSerializer"
-//    ).asJava)
+    putAll(Map(
+      "bootstrap.servers" -> configuration.server,
+      "key.serializer" -> "org.apache.kafka.common.serialization.StringSerializer",
+      "value.serializer" -> "org.apache.kafka.common.serialization.StringSerializer"
+    ).asJava)
   }
 
   private final val producer = new KafkaProducer[String, String](properties)

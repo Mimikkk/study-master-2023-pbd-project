@@ -27,12 +27,12 @@ object KafkaRecordConsumer extends RecordConsumer {
   }
 
   private final val properties = new Properties {
-//    putAll(Map(
-//      "bootstrap.servers" -> configuration.server,
-//      "group.id" -> configuration.groupId,
-//      "key.deserializer" -> "org.apache.kafka.common.serialization.StringDeserializer",
-//      "value.deserializer" -> "org.apache.kafka.common.serialization.StringDeserializer"
-//    ).asJava)
+    putAll(Map(
+      "bootstrap.servers" -> configuration.server,
+      "group.id" -> configuration.groupId,
+      "key.deserializer" -> "org.apache.kafka.common.serialization.StringDeserializer",
+      "value.deserializer" -> "org.apache.kafka.common.serialization.StringDeserializer"
+    ).asJava)
   }
 
   private final val consumer = new KafkaConsumer[String, String](properties)

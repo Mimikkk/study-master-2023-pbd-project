@@ -26,7 +26,3 @@ final class StockPriceWatermarkStrategy extends WatermarkStrategyBase[StockPrice
     override def extractTimestamp(model: StockPrice, long: Long): Long = model.date.getTime
   }
 }
-
-object StockPriceWatermarkStrategy {
-  def create(): StockPriceWatermarkStrategy = new StockPriceWatermarkStrategy()
-}
