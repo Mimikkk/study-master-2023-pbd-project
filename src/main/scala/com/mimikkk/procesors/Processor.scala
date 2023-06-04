@@ -15,7 +15,7 @@ import com.mimikkk.models.stockprice.{StockPrice, StockPriceWatermarkStrategy}
 import org.apache.flink.connector.jdbc.JdbcStatementBuilder
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
-
+import com.mimikkk.procesors.AddFunction
 import java.sql.PreparedStatement
 
 object Processor {
@@ -125,19 +125,17 @@ object Processor {
       .addSink(DatabaseSinkFactory.create[StockPriceRecordProcessFunction.Result](
         insertStatement,
         // Has to be verbose to ensure serialization for Spark preprocessor
-        new JdbcStatementBuilder[StockPriceRecordProcessFunction.Result] {
-          override def accept(statement: PreparedStatement, price: StockPriceRecordProcessFunction.Result): Unit = {
-            statement.setLong(1, price.start)
-            statement.setString(2, price.stockId)
-            statement.setFloat(3, price.close)
-            statement.setFloat(4, price.low)
-            statement.setFloat(5, price.high)
-            statement.setFloat(6, price.volume)
-            statement.setFloat(7, price.close)
-            statement.setFloat(8, price.low)
-            statement.setFloat(9, price.high)
-            statement.setFloat(10, price.volume)
-          }
+        (statement: PreparedStatement, price: StockPriceRecordProcessFunction.Result) => {
+          statement.setLong(1, price.start)
+          statement.setString(2, price.stockId)
+          statement.setFloat(3, price.close)
+          statement.setFloat(4, price.low)
+          statement.setFloat(5, price.high)
+          statement.setFloat(6, price.volume)
+          statement.setFloat(7, price.close)
+          statement.setFloat(8, price.low)
+          statement.setFloat(9, price.high)
+          statement.setFloat(10, price.volume)
         },
         url,
         username,
