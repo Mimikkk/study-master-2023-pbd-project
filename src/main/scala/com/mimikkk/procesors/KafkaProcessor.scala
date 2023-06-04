@@ -101,7 +101,7 @@ object KafkaProcessor extends Processor {
     stream(3).toFloat,
     stream(4).toFloat,
     stream(5).toFloat,
-    stream(6).toInt,
+    stream(6).toFloat.toInt,
     stream(7),
   )
 
