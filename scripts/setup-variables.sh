@@ -14,7 +14,7 @@ export KAFKA_BOOTSTRAP_SERVERS="${CLUSTER_NAME}-w-0:9092"
 export KAFKA_GROUP_ID="stock-prices-group"
 
 # Database parameters
-export JDBC_URL="jdbc:mysql://${CLUSTER_NAME}-m:3306/stock-prices"
+export JDBC_URL="jdbc:mysql://${CLUSTER_NAME}-m:3306/stock_prices"
 export JDBC_USERNAME="stream-user"
 export JDBC_PASSWORD="stream"
 
