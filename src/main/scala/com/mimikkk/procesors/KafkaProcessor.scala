@@ -20,7 +20,7 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
 
 import java.sql.PreparedStatement
 import java.text.SimpleDateFormat
-import java.util.Properties
+import java.util.{Date, Properties}
 
 object KafkaProcessor extends Processor {
   if (args.length != 11) {
@@ -73,7 +73,7 @@ object KafkaProcessor extends Processor {
 
   private final val format = new SimpleDateFormat("yyyy-MM-dd")
 
-  private final val environment = StreamExecutionEnvironment.getExecutionEnvironment
+  private final val environment = StreamExecutionEnvironment.createLocalEnvironment(0)
   environment.getConfig.setRestartStrategy(fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
   environment.registerCachedFile(configuration.meta, StockMeta.name)
 
