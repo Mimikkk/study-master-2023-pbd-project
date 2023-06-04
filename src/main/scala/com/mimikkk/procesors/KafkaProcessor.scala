@@ -99,12 +99,6 @@ object KafkaProcessor extends Processor {
   private final val stringStream = environment fromSource
     (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
 
-  println("hh")
-  val properties = new Properties()
-  properties.setProperty("bootstrap.servers", configuration.kafka.server)
-  properties.setProperty("group.id", configuration.kafka.groupId)
-  println("hh")
-
   private final val recordStream = stringStream
     .map(_ split ",")
     .filter(_.length == 8)
