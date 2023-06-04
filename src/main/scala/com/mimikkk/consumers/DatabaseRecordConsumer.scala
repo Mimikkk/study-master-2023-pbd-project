@@ -19,8 +19,10 @@ object DatabaseRecordConsumer extends RecordConsumer {
   private final val password = args(2)
   private final val selectRecords = "SELECT * FROM stock_prices ORDER BY window_start DESC LIMIT 50"
 
+
   private final var connection: Connection = _
   try {
+    Class.forName("com.mysql.cj.jdbc.Driver")
     connection = DriverManager.getConnection(url, username, password)
     val statement = connection.createStatement
 
@@ -48,3 +50,4 @@ object DatabaseRecordConsumer extends RecordConsumer {
   }
   connection close()
 }
+
