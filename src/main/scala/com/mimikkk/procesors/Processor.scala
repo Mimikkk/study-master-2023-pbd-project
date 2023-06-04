@@ -1,11 +1,13 @@
 package com.mimikkk.procesors
 
 import com.mimikkk.sinks.KafkaSinkFactory
+import org.apache.flink.api.common.eventtime.WatermarkStrategy
 import org.apache.flink.api.common.restartstrategy.RestartStrategies
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation
+import org.apache.flink.connector.kafka.source.KafkaSource
+import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
 
 import java.util.Properties
 
@@ -78,26 +80,18 @@ object Processor {
     environment.getConfig.setRestartStrategy(RestartStrategies.fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
     environment.registerCachedFile(meta, "meta-file")
 
-//    val source = KafkaSource.builder[String]
-//      .setBootstrapServers(server)
-//      .setTopics(contentTopic)
-//      .setGroupId(groupId)
-//      .setStartingOffsets(OffsetsInitializer.earliest)
-//      .setValueOnlyDeserializer(new SimpleStringSchema)
-//      .build
+    val source = KafkaSource.builder[String]
+      .setBootstrapServers(server)
+      .setTopics(contentTopic)
+      .setGroupId(groupId)
+      .setStartingOffsets(OffsetsInitializer.earliest)
+      .setValueOnlyDeserializer(new SimpleStringSchema)
+      .build
 
-    val properties = new Properties()
-    properties.setProperty("bootstrap.servers", server)
-    properties.setProperty("group.id", groupId)
-    val inputStream = environment.addSource(
-      new FlinkKafkaConsumer[String](
-        anomalyTopic,
-        new SimpleStringSchema(),
-        properties
-      )
-    )
-    var sink =
-    inputStream.map(_.toString).sinkTo(KafkaSinkFactory.create(server, anomalyTopic))
+    val stringStream = environment fromSource
+      (source, WatermarkStrategy.noWatermarks(), s"Kafka $contentTopic Source")
+
+    stringStream.map(_.toString).sinkTo(KafkaSinkFactory.create(server, anomalyTopic))
 
 //    val stringStream = environment fromSource
 //      (inputStream, WatermarkStrategy.noWatermarks(), s"Kafka ${contentTopic} Source")
