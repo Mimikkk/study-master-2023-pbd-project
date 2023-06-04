@@ -4,8 +4,8 @@ ThisBuild / scalaVersion := "2.12.17"
 ThisBuild / scalacOptions += "-target:jvm-1.8"
 
 libraryDependencies ++= Seq(
-  "org.apache.kafka" % "kafka-clients" % "2.3.1",
-  "mysql" % "mysql-connector-java" % "8.0.28",
+  "org.apache.kafka" % "kafka-clients" % "3.4.0",
+  "mysql" % "mysql-connector-java" % "8.0.32",
   "org.apache.flink" % "flink-core" % "1.14.4",
   "org.apache.flink" %% "flink-clients" % "1.14.4",
   "org.apache.flink" %% "flink-scala" % "1.14.4",
