@@ -15,7 +15,6 @@ import com.mimikkk.models.stockprice.{StockPrice, StockPriceWatermarkStrategy}
 import org.apache.flink.connector.jdbc.JdbcStatementBuilder
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
-import com.mimikkk.procesors.AddFunction
 import java.sql.PreparedStatement
 
 object Processor {
