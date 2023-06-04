@@ -98,8 +98,9 @@ object KafkaProcessor extends Processor {
 
   private final val recordStream = stringStream
     .map(_ split ",")
-    .map(intoStockPrice)
-    .assignTimestampsAndWatermarks(StockPriceWatermarkStrategy.create())
+    .print()
+//    .map(intoStockPrice)
+//    .assignTimestampsAndWatermarks(StockPriceWatermarkStrategy.create())
 
   private final val url = configuration.database.url
   private final val username = configuration.database.username
@@ -125,13 +126,13 @@ object KafkaProcessor extends Processor {
     case UpdateStrategy.Historical => Time seconds 10
   }
 
-  recordStream
-    .keyBy(_.stockId)
-    .window(TumblingEventTimeWindows of (Time days 30))
-    .trigger(ContinuousProcessingTimeTrigger of every)
-    .aggregate(new StockPriceRecordAggregator, new StockPriceRecordProcessFunction)
-    .map(new StockPriceRecordEntitleFunction)
-    .print()
+//  recordStream
+//    .keyBy(_.stockId)
+//    .window(TumblingEventTimeWindows of (Time days 30))
+//    .trigger(ContinuousProcessingTimeTrigger of every)
+//    .aggregate(new StockPriceRecordAggregator, new StockPriceRecordProcessFunction)
+//    .map(new StockPriceRecordEntitleFunction)
+//    .print()
 //    .addSink(DatabaseSinkFactory.create[StockPriceRecordEntitleFunction.Result](
 //      insertStatement,
 //      // Has to be verbose to ensure serialization for Spark preprocessor
@@ -156,15 +157,15 @@ object KafkaProcessor extends Processor {
 //    ))
 
 
-  private final val percentageFluctuation = configuration.anomaly.percentageFluctuation
-  recordStream
-    .keyBy(_.stockId)
-    .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
-    .aggregate(new StockPriceAnomalyAggregator, new StockPriceAnomalyProcessFunction)
-    .map(new StockPriceAnomalyEntitleFunction)
-    .filter(_.fluctuation > percentageFluctuation)
-    .map(_.toString)
-    .print()
+//  private final val percentageFluctuation = configuration.anomaly.percentageFluctuation
+//  recordStream
+//    .keyBy(_.stockId)
+//    .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
+//    .aggregate(new StockPriceAnomalyAggregator, new StockPriceAnomalyProcessFunction)
+//    .map(new StockPriceAnomalyEntitleFunction)
+//    .filter(_.fluctuation > percentageFluctuation)
+//    .map(_.toString)
+//    .print()
 //    .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
 
   environment.execute("Stock prices processing...")
