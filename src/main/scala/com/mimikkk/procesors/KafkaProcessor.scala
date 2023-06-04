@@ -10,18 +10,14 @@ import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.connector.jdbc.JdbcStatementBuilder
 import org.apache.flink.connector.kafka.source.KafkaSource
-import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer
-import org.apache.flink.streaming.api.datastream.{DataStream, DataStreamUtils}
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.triggers.ContinuousProcessingTimeTrigger
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
 
 import java.sql.PreparedStatement
 import java.text.SimpleDateFormat
-import java.time.Duration
-import java.util.{Date, Properties}
+import java.util.Properties
 
 object KafkaProcessor extends Processor {
   if (args.length != 11) {
