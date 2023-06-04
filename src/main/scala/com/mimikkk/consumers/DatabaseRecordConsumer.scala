@@ -35,13 +35,18 @@ object DatabaseRecordConsumer extends RecordConsumer {
         val start = new Date(records getLong "window_start").toLocalDate
         val end = start plusDays 30
 
-        val stockPriceId = records getString "id"
-        val stock = records getString "stock"
+        val stockPriceId = records getString "stock_id"
+        val stock = records getString "title"
 
         val from = s"${start.getYear}-${start.getMonth}-${start.getDayOfMonth}"
         val to = s"${end.getYear}-${end.getMonth}-${end.getDayOfMonth}"
 
-        println(s"$from - $to \t $stock($stockPriceId)")
+        val close = records getFloat "close"
+        val low = records getFloat "low"
+        val high = records getFloat "high"
+        val volume = records getInt "volume"
+
+        println(s"$from - $to \t $stock(id=$stockPriceId, close=$close, low=$low, high=$high, volume==$volume)")
       }
 
       Thread.sleep(1000)
