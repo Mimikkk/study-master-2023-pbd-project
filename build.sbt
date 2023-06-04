@@ -1,6 +1,6 @@
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "com.mimikkk"
-ThisBuild / scalaVersion := "2.11.12"
+ThisBuild / scalaVersion := "2.12.17"
 ThisBuild / scalacOptions += "-target:jvm-1.8"
 
 libraryDependencies ++= Seq(

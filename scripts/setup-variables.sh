@@ -19,7 +19,7 @@ export JDBC_USERNAME="stream-user"
 export JDBC_PASSWORD="password"
 
 # Flink parameters
-export FLINK_DIRECTORY="$HOME/flink-1.15.4"
+export FLINK_DIRECTORY="$HOME/flink-1.17.1"
 
 # Anomaly parameters
 export ANOMALY_STOCK_DAYS_RANGE=7
