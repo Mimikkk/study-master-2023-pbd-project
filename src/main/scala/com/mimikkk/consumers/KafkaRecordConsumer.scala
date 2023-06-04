@@ -22,14 +22,14 @@ object KafkaRecordConsumer extends RecordConsumer {
 
   private final object configuration {
     val server: String = args(0)
-    val id: String = args(1)
+    val groupId: String = args(1)
     val topic: String = args(2)
   }
 
   private final val properties = new Properties {
     putAll(Map(
       "bootstrap.servers" -> configuration.server,
-      "group.id" -> configuration.id,
+      "group.id" -> configuration.groupId,
       "key.deserializer" -> "org.apache.kafka.common.serialization.StringDeserializer",
       "value.deserializer" -> "org.apache.kafka.common.serialization.StringDeserializer"
     ).asJava)
