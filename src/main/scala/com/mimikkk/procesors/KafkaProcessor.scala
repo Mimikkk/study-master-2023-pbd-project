@@ -89,11 +89,11 @@ object KafkaProcessor extends Processor {
   val stringStream = environment.addSource(new FlinkKafkaConsumer[String](configuration.kafka.contentTopic, new SimpleStringSchema(), properties))
 
 
-  //  private final val stringStream = environment fromSource
+  //  val stringStream = environment fromSource
   //    (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
 
   val format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-  private final val recordStream = stringStream
+  val recordStream = stringStream
     .map(_ split ",")
     .filter(stream => stream != null && stream.length == 8 && !stream.contains(""))
     .map(stream => StockPrice(
