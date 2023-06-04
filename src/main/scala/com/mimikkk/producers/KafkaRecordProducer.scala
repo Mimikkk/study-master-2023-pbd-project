@@ -23,21 +23,23 @@ object KafkaRecordProducer extends RecordProducer {
     System.exit(1)
   }
 
-  final val partsDirectory = args(0)
-  final val secondsBetweenParts = args(1).toInt
-  final val topic = args(2)
-  final val server = args(3)
+  private final object configuration {
+    final val partsDirectory = args(0)
+    final val secondsBetweenParts = args(1).toInt
+    final val topic = args(2)
+    final val server = args(3)
+  }
 
   private final val properties = new Properties {
     putAll(Map(
-      "bootstrap.servers" -> server,
+      "bootstrap.servers" -> configuration.server,
       "key.serializer" -> "org.apache.kafka.common.serialization.StringSerializer",
       "value.serializer" -> "org.apache.kafka.common.serialization.StringSerializer"
     ).asJava)
   }
 
   private final val producer = new KafkaProducer[String, String](properties)
-  private final val partsPaths = new File(partsDirectory) listFiles() map (_.getAbsolutePath)
+  private final val partsPaths = new File(configuration.partsDirectory) listFiles() map (_.getAbsolutePath)
 
   println("Start broadcasting...")
   partsPaths.sorted.zipWithIndex foreach (pair => try {
@@ -45,10 +47,10 @@ object KafkaRecordProducer extends RecordProducer {
 
     println(s"< Stream '${index + 1}/${partsPaths.length}' Sending... >")
     lines(Paths get path) skip 1 forEach (
-      row => producer send new ProducerRecord[String, String](topic, row.split(',')(0), row)
+      row => producer send new ProducerRecord[String, String](configuration.topic, row.split(',')(0), row)
       )
     println(s"< Stream Sent. >")
-    SECONDS sleep secondsBetweenParts
+    SECONDS sleep configuration.secondsBetweenParts
   } catch {
     case e: Throwable => e printStackTrace()
   })
