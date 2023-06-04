@@ -73,17 +73,6 @@ object KafkaProcessor extends Processor {
 
   private final val format = new SimpleDateFormat("yyyy-MM-dd")
 
-  private final def intoStockPrice = (stream: Array[String]) => StockPrice(
-    format parse stream(0),
-    stream(1).toFloat,
-    stream(2).toFloat,
-    stream(3).toFloat,
-    stream(4).toFloat,
-    stream(5).toFloat,
-    stream(6).toInt,
-    stream(7),
-  )
-
   private final val environment = StreamExecutionEnvironment.getExecutionEnvironment
   environment.getConfig.setRestartStrategy(fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
   environment.registerCachedFile(configuration.meta, StockMeta.name)
@@ -102,7 +91,16 @@ object KafkaProcessor extends Processor {
   private final val recordStream = stringStream
     .map(_ split ",")
     .filter(_.length == 8)
-    .map(intoStockPrice)
+    .map(stream => StockPrice(
+      format parse stream(0),
+      stream(1).toFloat,
+      stream(2).toFloat,
+      stream(3).toFloat,
+      stream(4).toFloat,
+      stream(5).toFloat,
+      stream(6).toInt,
+      stream(7),
+    ))
     .assignTimestampsAndWatermarks(new StockPriceWatermarkStrategy)
 
   private final val url = configuration.database.url
