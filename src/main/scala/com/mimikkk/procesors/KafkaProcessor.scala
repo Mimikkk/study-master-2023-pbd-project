@@ -11,12 +11,14 @@ import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.connector.jdbc.JdbcStatementBuilder
 import org.apache.flink.connector.kafka.source.KafkaSource
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer
+import org.apache.flink.streaming.api.datastream.{DataStream, DataStreamUtils}
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.triggers.ContinuousProcessingTimeTrigger
 
 import java.sql.PreparedStatement
+import java.text.SimpleDateFormat
 
 object KafkaProcessor extends Processor {
   if (args.length != 11) {
@@ -67,7 +69,7 @@ object KafkaProcessor extends Processor {
   private final val numberOfRetries = 5
   private final val millisecondsBetweenAttempts = 5
 
-  private final val format = new java.text.SimpleDateFormat("yyyy-MM-dd")
+  private final val format = new SimpleDateFormat("yyyy-MM-dd")
 
   private final val environment = StreamExecutionEnvironment.getExecutionEnvironment
   environment.getConfig.setRestartStrategy(fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
@@ -86,6 +88,7 @@ object KafkaProcessor extends Processor {
 
   private final val recordStream = stringStream
     .map(_ split ",")
+    .filter(_.length == 8)
     .map(stream => StockPrice(
       format parse stream(0),
       stream(1).toFloat,
