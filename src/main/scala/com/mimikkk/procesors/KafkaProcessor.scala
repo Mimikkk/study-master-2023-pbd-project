@@ -11,10 +11,10 @@ import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.connector.jdbc.JdbcStatementBuilder
 import org.apache.flink.connector.kafka.source.KafkaSource
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer
-import org.apache.flink.streaming.api.scala.{OutputTag, StreamExecutionEnvironment, WindowedStream}
+import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
-import org.apache.flink.streaming.api.windowing.triggers.{ContinuousEventTimeTrigger, ContinuousProcessingTimeTrigger, Trigger}
+import org.apache.flink.streaming.api.windowing.triggers.ContinuousProcessingTimeTrigger
 
 import java.sql.PreparedStatement
 
@@ -120,7 +120,7 @@ object KafkaProcessor extends Processor {
       ON DUPLICATE KEY UPDATE close=?, low=?, high=?, volume=?
     """
 
-  val every = configuration.updateStrategy match {
+  private val every = configuration.updateStrategy match {
     case UpdateStrategy.Realtime => Time days 1
     case UpdateStrategy.Historical => Time seconds 10
   }
