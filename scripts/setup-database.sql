@@ -8,6 +8,7 @@ USE stock_prices;
 CREATE TABLE IF NOT EXISTS stock_prices (
     window_start BIGINT NOT NULL,
     stock_id varchar(32) NOT NULL,
+    title varchar(128) NOT NULL,
     close FLOAT NOT NULL,
     low FLOAT NOT NULL,
     high FLOAT NOT NULL,
