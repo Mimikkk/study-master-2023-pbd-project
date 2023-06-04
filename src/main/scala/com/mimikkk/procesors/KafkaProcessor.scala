@@ -73,7 +73,7 @@ object KafkaProcessor extends Processor {
 
   private final val format = new SimpleDateFormat("yyyy-MM-dd")
 
-  private final val environment = StreamExecutionEnvironment.createLocalEnvironment(0)
+  private final val environment = StreamExecutionEnvironment.createLocalEnvironment(1)
   environment.getConfig.setRestartStrategy(fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
   environment.registerCachedFile(configuration.meta, StockMeta.name)
 
