@@ -16,9 +16,11 @@ import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.triggers.ContinuousProcessingTimeTrigger
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
 
 import java.sql.PreparedStatement
 import java.text.SimpleDateFormat
+import java.util.Properties
 
 object KafkaProcessor extends Processor {
   if (args.length != 11) {
@@ -83,9 +85,14 @@ object KafkaProcessor extends Processor {
     .setValueOnlyDeserializer(new SimpleStringSchema)
     .build
 
-  private final val stringStream = environment fromSource
-    (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
+//  private final val stringStream = environment fromSource
+//    (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
 
+  val properties = new Properties()
+  properties.setProperty("bootstrap.servers", configuration.kafka.server)
+  properties.setProperty("group.id", configuration.kafka.groupId)
+
+  val stringStream = environment.addSource(new FlinkKafkaConsumer[String](configuration.kafka.contentTopic, new SimpleStringSchema(), properties))
   private final val recordStream = stringStream
     .map(_ split ",")
     .filter(_.length == 8)
