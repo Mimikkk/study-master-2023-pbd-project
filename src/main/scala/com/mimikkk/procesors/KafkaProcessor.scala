@@ -69,18 +69,6 @@ object KafkaProcessor extends Processor {
 
   private final val format = new java.text.SimpleDateFormat("yyyy-MM-dd")
 
-  private final def intoStockPrice = (stream: Array[String]) => StockPrice(
-    format parse stream(0),
-    stream(1).toFloat,
-    stream(2).toFloat,
-    stream(3).toFloat,
-    stream(4).toFloat,
-    stream(5).toFloat,
-    stream(6).toInt,
-    stream(7),
-  )
-
-
   private final val environment = StreamExecutionEnvironment.getExecutionEnvironment
   environment.getConfig.setRestartStrategy(fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
   environment.registerCachedFile(configuration.meta, StockMeta.name)
@@ -98,9 +86,17 @@ object KafkaProcessor extends Processor {
 
   private final val recordStream = stringStream
     .map(_ split ",")
-    .print()
-//    .map(intoStockPrice)
-//    .assignTimestampsAndWatermarks(StockPriceWatermarkStrategy.create())
+    .map(stream => StockPrice(
+      format parse stream(0),
+      stream(1).toFloat,
+      stream(2).toFloat,
+      stream(3).toFloat,
+      stream(4).toFloat,
+      stream(5).toFloat,
+      stream(6).toInt,
+      stream(7),
+    ))
+    .assignTimestampsAndWatermarks(StockPriceWatermarkStrategy.create())
 
   private final val url = configuration.database.url
   private final val username = configuration.database.username
@@ -126,47 +122,44 @@ object KafkaProcessor extends Processor {
     case UpdateStrategy.Historical => Time seconds 10
   }
 
-//  recordStream
-//    .keyBy(_.stockId)
-//    .window(TumblingEventTimeWindows of (Time days 30))
-//    .trigger(ContinuousProcessingTimeTrigger of every)
-//    .aggregate(new StockPriceRecordAggregator, new StockPriceRecordProcessFunction)
-//    .map(new StockPriceRecordEntitleFunction)
-//    .print()
-//    .addSink(DatabaseSinkFactory.create[StockPriceRecordEntitleFunction.Result](
-//      insertStatement,
-//      // Has to be verbose to ensure serialization for Spark preprocessor
-//      new JdbcStatementBuilder[StockPriceRecordEntitleFunction.Result] {
-//        override def accept(statement: PreparedStatement, price: StockPriceRecordEntitleFunction.Result): Unit = {
-//          statement.setLong(1, price.start)
-//          statement.setString(2, price.stockId)
-//          statement.setString(3, price.title)
-//          statement.setFloat(4, price.close)
-//          statement.setFloat(5, price.low)
-//          statement.setFloat(6, price.high)
-//          statement.setFloat(7, price.volume)
-//          statement.setFloat(8, price.close)
-//          statement.setFloat(9, price.low)
-//          statement.setFloat(10, price.high)
-//          statement.setFloat(11, price.volume)
-//        }
-//      },
-//      url,
-//      username,
-//      password
-//    ))
+  recordStream
+    .keyBy(_.stockId)
+    .window(TumblingEventTimeWindows of (Time days 30))
+    .aggregate(new StockPriceRecordAggregator, new StockPriceRecordProcessFunction)
+    .map(new StockPriceRecordEntitleFunction)
+    .addSink(DatabaseSinkFactory.create[StockPriceRecordEntitleFunction.Result](
+      insertStatement,
+      // Has to be verbose to ensure serialization for Spark preprocessor
+      new JdbcStatementBuilder[StockPriceRecordEntitleFunction.Result] {
+        override def accept(statement: PreparedStatement, price: StockPriceRecordEntitleFunction.Result): Unit = {
+          statement.setLong(1, price.start)
+          statement.setString(2, price.stockId)
+          statement.setString(3, price.title)
+          statement.setFloat(4, price.close)
+          statement.setFloat(5, price.low)
+          statement.setFloat(6, price.high)
+          statement.setFloat(7, price.volume)
+          statement.setFloat(8, price.close)
+          statement.setFloat(9, price.low)
+          statement.setFloat(10, price.high)
+          statement.setFloat(11, price.volume)
+        }
+      },
+      url,
+      username,
+      password
+    ))
 
 
-//  private final val percentageFluctuation = configuration.anomaly.percentageFluctuation
-//  recordStream
-//    .keyBy(_.stockId)
-//    .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
-//    .aggregate(new StockPriceAnomalyAggregator, new StockPriceAnomalyProcessFunction)
-//    .map(new StockPriceAnomalyEntitleFunction)
-//    .filter(_.fluctuation > percentageFluctuation)
-//    .map(_.toString)
-//    .print()
-//    .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
+  private final val percentageFluctuation = configuration.anomaly.percentageFluctuation
+  recordStream
+    .keyBy(_.stockId)
+    .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
+    .aggregate(new StockPriceAnomalyAggregator, new StockPriceAnomalyProcessFunction)
+    .map(new StockPriceAnomalyEntitleFunction)
+    .filter(_.fluctuation > percentageFluctuation)
+    .map(_.toString)
+    .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
 
   environment.execute("Stock prices processing...")
 }
