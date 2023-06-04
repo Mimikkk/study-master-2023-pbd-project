@@ -12,6 +12,6 @@ CREATE TABLE IF NOT EXISTS stock_prices (
     close FLOAT NOT NULL,
     low FLOAT NOT NULL,
     high FLOAT NOT NULL,
-    volumne INT NOT NULL,
+    volume INT NOT NULL,
     PRIMARY KEY (window_start, stock_id)
 );

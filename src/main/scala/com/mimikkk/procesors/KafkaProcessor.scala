@@ -86,9 +86,6 @@ object KafkaProcessor extends Processor {
   properties.setProperty("bootstrap.servers", configuration.kafka.server)
   properties.setProperty("group.id", configuration.kafka.groupId)
 
-  //  val stringStream = environment.addSource(new FlinkKafkaConsumer[String](configuration.kafka.contentTopic, new SimpleStringSchema(), properties))
-
-
   val stringStream = environment fromSource
     (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
 
