@@ -88,24 +88,29 @@ object KafkaProcessor extends Processor {
 //  private final val stringStream = environment fromSource
 //    (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
 
+  println("hh")
   val properties = new Properties()
   properties.setProperty("bootstrap.servers", configuration.kafka.server)
   properties.setProperty("group.id", configuration.kafka.groupId)
-
+  println("hh")
   val stringStream = environment.addSource(new FlinkKafkaConsumer[String](configuration.kafka.contentTopic, new SimpleStringSchema(), properties))
   private final val recordStream = stringStream
     .map(_ split ",")
     .filter(_.length == 8)
-    .map(stream => StockPrice(
-      format parse stream(0),
-      stream(1).toFloat,
-      stream(2).toFloat,
-      stream(3).toFloat,
-      stream(4).toFloat,
-      stream(5).toFloat,
-      stream(6).toInt,
-      stream(7),
-    ))
+    .map(stream => {
+      println("stream(0): " + stream mkString ", ")
+
+      StockPrice(
+        format parse stream(0),
+        stream(1).toFloat,
+        stream(2).toFloat,
+        stream(3).toFloat,
+        stream(4).toFloat,
+        stream(5).toFloat,
+        stream(6).toInt,
+        stream(7),
+      )
+    })
     .assignTimestampsAndWatermarks(StockPriceWatermarkStrategy.create())
 
   private final val url = configuration.database.url
