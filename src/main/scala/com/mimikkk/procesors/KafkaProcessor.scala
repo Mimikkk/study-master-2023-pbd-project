@@ -97,16 +97,16 @@ object KafkaProcessor extends Processor {
     .map(_ split ",")
     .filter(_.length == 8)
     .map(stream => StockPrice(
-      format parse stream(0),
-      stream(1).toFloat,
-      stream(2).toFloat,
-      stream(3).toFloat,
-      stream(4).toFloat,
-      stream(5).toFloat,
-      stream(6).toInt,
-      stream(7),
+      new Date(),
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      ":(",
     ))
-    .assignTimestampsAndWatermarks(new StockPriceWatermarkStrategy)
+    .assignTimestampsAndWatermarks(new StockPriceWatermarkStrategy())
 
   private final val url = configuration.database.url
   private final val username = configuration.database.username
