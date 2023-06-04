@@ -107,7 +107,7 @@ object KafkaProcessor extends Processor {
 
   private final val recordStream = stringStream
     .map(_ split ",")
-    .filter(stream => stream.length == 8 && !stream.contains(""))
+    .filter(stream => stream != null && stream.length == 8 && !stream.contains(""))
     .map(intopierdolsie)
     .assignTimestampsAndWatermarks(new StockPriceWatermarkStrategy)
 
