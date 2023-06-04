@@ -5,7 +5,7 @@ gcloud dataproc clusters create "${CLUSTER_NAME}" \
   --num-workers 2 \
   --worker-machine-type n1-standard-2 --worker-boot-disk-size 50 \
   --image-version 2.0-debian10 \
-  --project "${PROJECT_ID}" --max-age=3h \
+  --project "${PROJECT_ID}" --max-age=12h \
   --optional-components=ZEPPELIN,DOCKER,ZOOKEEPER \
   --metadata "run-on-master=true" \
   --initialization-actions \
