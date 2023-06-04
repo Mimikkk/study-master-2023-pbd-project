@@ -72,7 +72,7 @@ object KafkaProcessor extends Processor {
   private final val numberOfRetries = 5
   private final val millisecondsBetweenAttempts = 0
 
-  private final val format = new SimpleDateFormat("yyyy-MM-dd")
+  private final val format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
   private final val environment = StreamExecutionEnvironment.getExecutionEnvironment
   environment.getConfig.setRestartStrategy(fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
@@ -95,7 +95,7 @@ object KafkaProcessor extends Processor {
   //    (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
 
   def intopierdolsie = (stream: Array[String]) => StockPrice(
-    new Date(),
+    format parse stream(0),
     stream(1).toFloat,
     stream(2).toFloat,
     stream(3).toFloat,
