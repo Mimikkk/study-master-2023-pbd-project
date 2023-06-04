@@ -138,45 +138,45 @@ object KafkaProcessor extends Processor {
     .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
 
 
-  //  recordStream
-  //    .keyBy(_.stockId)
-  //    .window(TumblingEventTimeWindows of (Time days 30))
-  //    .trigger(ContinuousProcessingTimeTrigger of every)
-  //    .aggregate(new StockPriceRecordAggregator, new StockPriceRecordProcessFunction)
-  //    .map(new StockPriceRecordEntitleFunction)
-  //    .addSink(DatabaseSinkFactory.create[StockPriceRecordEntitleFunction.Result](
-  //      insertStatement,
-  //      // Has to be verbose to ensure serialization for Spark preprocessor
-  //      new JdbcStatementBuilder[StockPriceRecordEntitleFunction.Result] {
-  //        override def accept(statement: PreparedStatement, price: StockPriceRecordEntitleFunction.Result): Unit = {
-  //          statement.setLong(1, price.start)
-  //          statement.setString(2, price.stockId)
-  //          statement.setString(3, price.title)
-  //          statement.setFloat(4, price.close)
-  //          statement.setFloat(5, price.low)
-  //          statement.setFloat(6, price.high)
-  //          statement.setFloat(7, price.volume)
-  //          statement.setFloat(8, price.close)
-  //          statement.setFloat(9, price.low)
-  //          statement.setFloat(10, price.high)
-  //          statement.setFloat(11, price.volume)
-  //        }
-  //      },
-  //      url,
-  //      username,
-  //      password
-  //    ))
+    recordStream
+      .keyBy(_.stockId)
+      .window(TumblingEventTimeWindows of (Time days 30))
+      .trigger(ContinuousProcessingTimeTrigger of every)
+      .aggregate(new StockPriceRecordAggregator, new StockPriceRecordProcessFunction)
+      .map(new StockPriceRecordEntitleFunction)
+      .addSink(DatabaseSinkFactory.create[StockPriceRecordEntitleFunction.Result](
+        insertStatement,
+        // Has to be verbose to ensure serialization for Spark preprocessor
+        new JdbcStatementBuilder[StockPriceRecordEntitleFunction.Result] {
+          override def accept(statement: PreparedStatement, price: StockPriceRecordEntitleFunction.Result): Unit = {
+            statement.setLong(1, price.start)
+            statement.setString(2, price.stockId)
+            statement.setString(3, price.title)
+            statement.setFloat(4, price.close)
+            statement.setFloat(5, price.low)
+            statement.setFloat(6, price.high)
+            statement.setFloat(7, price.volume)
+            statement.setFloat(8, price.close)
+            statement.setFloat(9, price.low)
+            statement.setFloat(10, price.high)
+            statement.setFloat(11, price.volume)
+          }
+        },
+        url,
+        username,
+        password
+      ))
 
 
   val percentageFluctuation = configuration.anomaly.percentageFluctuation
-  //  recordStream
-  //    .keyBy(_.stockId)
-  //    .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
-  //    .aggregate(new StockPriceAnomalyAggregator, new StockPriceAnomalyProcessFunction)
-  //    .map(new StockPriceAnomalyEntitleFunction)
-  //    .filter(_.fluctuation > percentageFluctuation)
-  //    .map(_.toString)
-  //    .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
+    recordStream
+      .keyBy(_.stockId)
+      .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
+      .aggregate(new StockPriceAnomalyAggregator, new StockPriceAnomalyProcessFunction)
+      .map(new StockPriceAnomalyEntitleFunction)
+      .filter(_.fluctuation > percentageFluctuation)
+      .map(_.toString)
+      .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
 
   environment.execute("Stock prices processing...")
 }
