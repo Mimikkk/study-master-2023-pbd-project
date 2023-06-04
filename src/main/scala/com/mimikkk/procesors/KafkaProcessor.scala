@@ -94,19 +94,21 @@ object KafkaProcessor extends Processor {
 //  private final val stringStream = environment fromSource
 //    (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
 
+  def intopierdolsie = (stream: Array[String]) => StockPrice(
+    new SimpleDateFormat("yyyy-MM-dd") parse stream(0),
+    stream(1).toFloat,
+    stream(2).toFloat,
+    stream(3).toFloat,
+    stream(4).toFloat,
+    stream(5).toFloat,
+    stream(6).toInt,
+    stream(7),
+  )
+
   private final val recordStream = stringStream
     .map(_ split ",")
     .filter(_.length == 8)
-    .map(stream => StockPrice(
-      format parse stream(0),
-      stream(1).toFloat,
-      stream(2).toFloat,
-      stream(3).toFloat,
-      stream(4).toFloat,
-      stream(5).toFloat,
-      stream(6).toInt,
-      stream(7),
-    ))
+    .map(intopierdolsie)
     .assignTimestampsAndWatermarks(new StockPriceWatermarkStrategy)
 
   private final val url = configuration.database.url
