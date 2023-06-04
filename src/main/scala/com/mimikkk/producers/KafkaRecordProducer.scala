@@ -6,7 +6,7 @@ import java.io.File
 import java.nio.file.Files._
 import java.nio.file.Paths
 import java.util.Properties
-import java.util.concurrent.TimeUnit.SECONDS
+import java.util.concurrent.TimeUnit
 import scala.collection.JavaConverters._
 
 object KafkaRecordProducer extends RecordProducer {
@@ -56,7 +56,7 @@ object KafkaRecordProducer extends RecordProducer {
       }
       )
     println(s"< Stream Sent. >")
-    SECONDS sleep secondsBetweenParts
+    TimeUnit.SECONDS.sleep(secondsBetweenParts)
   } catch {
     case e: Throwable => e printStackTrace()
   })
