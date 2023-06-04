@@ -92,12 +92,11 @@ object KafkaProcessor extends Processor {
   val stringStream = environment fromSource
     (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
 
-  val format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
   val recordStream = stringStream
     .map(_ split ",")
     .filter(stream => stream != null && stream.length == 8 && !stream.contains(""))
     .map(stream => StockPrice(
-      format parse stream(0),
+      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") parse stream(0),
       stream(1).toFloat,
       stream(2).toFloat,
       stream(3).toFloat,

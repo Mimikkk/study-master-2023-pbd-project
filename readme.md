@@ -126,7 +126,7 @@ Run scripts:
 2. Create necessary bucket with the name as the `${BUCKET_NAME}` variable defined in
    the [setup-variables.sh](./scripts/setup-variables.sh).
 3. Create necessary mysql instance with the google cloud (Sql menu / create instance). Or skip and use unsafe
-   current host with [setup-database-unsafe.sh](./scripts/setup-database-unsafe.sh), goto step 6.
+   current host with [setup-database-unsafe.sh](./scripts/setup-database-unsafe.sh) and `sudo mysql -u root < ./scripts/setup-database.sql`, goto step 6.
 4. Create connection to the cluster master vm.
 5. Connect sql instance to the cluster master vm.
 6. Run database setup query `mysql -h sql_ip -p < ./scripts/setup-database.sql`.
