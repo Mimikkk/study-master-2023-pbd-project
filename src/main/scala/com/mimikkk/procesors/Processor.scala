@@ -154,7 +154,6 @@ object Processor {
       .sinkTo(KafkaSinkFactory.create(configuration.kafka.server, configuration.kafka.anomalyTopic))
 
     environment.execute("Stock prices processing...")
-    environment.execute("Stock prices processing...")
   }
 }
 
