@@ -1,7 +1,6 @@
 package com.mimikkk.models.stockprice
 
 
-import com.mimikkk.models.stockprice.StockPricePropertyExtensions.Timestamp
 import org.apache.flink.api.common.eventtime.{TimestampAssignerSupplier, Watermark, WatermarkGeneratorSupplier, WatermarkOutput, TimestampAssigner => TimestampAssignerBase, WatermarkGenerator => WatermarkGeneratorBase, WatermarkStrategy => WatermarkStrategyBase}
 
 
@@ -15,7 +14,7 @@ final class StockPriceWatermarkStrategy extends WatermarkStrategyBase[StockPrice
     private var maxTimestamp: Long = _
 
     override def onEvent(item: StockPrice, long: Long, output: WatermarkOutput): Unit = {
-      maxTimestamp = math.max(item.timestamp, maxTimestamp)
+      maxTimestamp = math.max(item.date.getTime, maxTimestamp)
     }
 
     override def onPeriodicEmit(watermarkOutput: WatermarkOutput): Unit = {
@@ -24,7 +23,7 @@ final class StockPriceWatermarkStrategy extends WatermarkStrategyBase[StockPrice
   }
 
   final class TimestampAssigner extends TimestampAssignerBase[StockPrice] {
-    override def extractTimestamp(model: StockPrice, long: Long): Long = model.timestamp
+    override def extractTimestamp(model: StockPrice, long: Long): Long = model.date.getTime
   }
 }
 

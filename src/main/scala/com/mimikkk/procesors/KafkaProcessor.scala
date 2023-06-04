@@ -69,7 +69,7 @@ object KafkaProcessor extends Processor {
 
 
   private final val numberOfRetries = 5
-  private final val millisecondsBetweenAttempts = 5
+  private final val millisecondsBetweenAttempts = 0
 
   private final val format = new SimpleDateFormat("yyyy-MM-dd")
 
@@ -77,13 +77,13 @@ object KafkaProcessor extends Processor {
   environment.getConfig.setRestartStrategy(fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
   environment.registerCachedFile(configuration.meta, StockMeta.name)
 
-  private final val source = KafkaSource.builder[String]
-    .setBootstrapServers(configuration.kafka.server)
-    .setTopics(configuration.kafka.contentTopic)
-    .setGroupId(configuration.kafka.groupId)
-    .setStartingOffsets(OffsetsInitializer.earliest)
-    .setValueOnlyDeserializer(new SimpleStringSchema)
-    .build
+//  private final val source = KafkaSource.builder[String]
+//    .setBootstrapServers(configuration.kafka.server)
+//    .setTopics(configuration.kafka.contentTopic)
+//    .setGroupId(configuration.kafka.groupId)
+//    .setStartingOffsets(OffsetsInitializer.earliest)
+//    .setValueOnlyDeserializer(new SimpleStringSchema)
+//    .build
 
 //  private final val stringStream = environment fromSource
 //    (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
