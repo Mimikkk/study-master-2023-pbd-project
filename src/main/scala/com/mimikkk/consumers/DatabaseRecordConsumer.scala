@@ -1,6 +1,7 @@
 package com.mimikkk.consumers
 
 import java.sql.{Connection, Date, DriverManager}
+import com.mysql.jdbc.Driver
 
 object DatabaseRecordConsumer extends RecordConsumer {
   if (args.length != 3) {
@@ -22,7 +23,7 @@ object DatabaseRecordConsumer extends RecordConsumer {
 
   private final var connection: Connection = _
   try {
-    Class.forName("com.mysql.cj.jdbc.Driver")
+    DriverManager.registerDriver(new Driver)
     connection = DriverManager.getConnection(url, username, password)
     val statement = connection.createStatement
 
