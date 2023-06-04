@@ -81,7 +81,6 @@ object KafkaProcessor extends Processor {
     .setBootstrapServers(configuration.kafka.server)
     .setTopics(configuration.kafka.contentTopic)
     .setGroupId(configuration.kafka.groupId)
-    .setStartingOffsets(OffsetsInitializer.earliest)
     .setValueOnlyDeserializer(new SimpleStringSchema)
     .build
 
