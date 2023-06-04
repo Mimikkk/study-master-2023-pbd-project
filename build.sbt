@@ -6,6 +6,10 @@ ThisBuild / organization := "com.mimikkk"
 ThisBuild / scalaVersion := scala
 ThisBuild / scalacOptions += "-target:jvm-1.8"
 
+assemblyMergeStrategy / assembly := {
+  case PathList("META-INF", _*) => MergeStrategy.discard
+  case _ => MergeStrategy.first
+}
 libraryDependencies ++= Seq(
   "org.apache.kafka" % "kafka-clients" % "3.4.0",
   "mysql" % "mysql-connector-java" % "8.0.32",
