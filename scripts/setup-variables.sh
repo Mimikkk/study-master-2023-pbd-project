@@ -25,4 +25,5 @@ export FLINK_DIRECTORY="$HOME/flink-1.15.4"
 export ANOMALY_STOCK_DAYS_RANGE=7
 export ANOMALY_STOCK_PERCENT_FLUCTUATION=40
 
+# Processing parameters
 export PROCESSING_TYPE="historical"

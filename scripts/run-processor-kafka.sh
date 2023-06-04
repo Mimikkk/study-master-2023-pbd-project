@@ -13,4 +13,4 @@ source ./scripts/setup-variables.sh
   "$JDBC_PASSWORD" \
   "$ANOMALY_STOCK_DAYS_RANGE" \
   "$ANOMALY_STOCK_PERCENT_FLUCTUATION" \
-  "historical"
+  "$PROCESSING_TYPE"

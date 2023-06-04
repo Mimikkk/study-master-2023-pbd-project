@@ -77,6 +77,32 @@ loading of all required variables located in [setup-variables.sh](./scripts/setu
 source ./scripts/{script_name}
 ```
 
+### Parameters
+
+- Cloud parameters
+    - `CLUSTER_NAME` -- Name of the cluster
+    - `BUCKET_NAME` -- Name of the bucket
+    - `HADOOP_CLASSPATH` -- hadoop classpath
+    - `HADOOP_CONF_DIR` -- hadoop configuration directory
+    - `INPUT_FILE_PATH` -- path to the input file of dataset
+    - `INPUT_DIRECTORY_PATH` -- path to the input directory of dataset
+- Kafka parameters
+    - `KAFKA_PRODUCER_SLEEP_TIME` -- kafka producer sleep time
+    - `KAFKA_CONTENT_TOPIC_NAME` -- kafka content topic name
+    - `KAFKA_ANOMALY_TOPIC_NAME` -- kafka anomaly topic name
+    - `KAFKA_BOOTSTRAP_SERVERS` -- kafka bootstrap servers
+    - `KAFKA_GROUP_ID` -- kafka group id
+- JDBC parameters
+    - `JDBC_URL` -- url to the database
+    - `JDBC_USERNAME` -- username to the database
+    - `JDBC_PASSWORD`  -- password to the database
+- Flink parameters
+    - `FLINK_DIRECTORY` -- flink directory
+- Anomaly parameters
+    - `ANOMALY_STOCK_DAYS_RANG` -- anomaly stock days range
+    - `ANOMALY_STOCK_PERCENT_FLUCTUATION` -- anomaly stock percent fluctuation
+- `PROCESSING_TYPE` -- "historical" | "realtime" -- content processing type
+
 Setup scripts:
 
 - [setup-variables.sh](./scripts/setup-variables.sh) is used to set up the variables.
