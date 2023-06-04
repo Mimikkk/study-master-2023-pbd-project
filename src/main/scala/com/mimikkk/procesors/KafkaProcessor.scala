@@ -95,7 +95,7 @@ object KafkaProcessor extends Processor {
 //    (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
 
   def intopierdolsie = (stream: Array[String]) => StockPrice(
-    new SimpleDateFormat("yyyy-MM-dd") parse stream(0),
+    new Date(),
     stream(1).toFloat,
     stream(2).toFloat,
     stream(3).toFloat,
