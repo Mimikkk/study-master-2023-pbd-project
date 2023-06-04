@@ -95,7 +95,7 @@ object Processor {
 
 
     val environment = StreamExecutionEnvironment.getExecutionEnvironment
-    environment.getConfig.setRestartStrategy(fixedDelayRestart(5, 100))
+    environment.getConfig.setRestartStrategy(fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
     environment.registerCachedFile(configuration.meta, "meta-file")
 
     val source = KafkaSource.builder[String]
