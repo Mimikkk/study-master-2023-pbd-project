@@ -1,7 +1,7 @@
 package com.mimikkk.consumers
 
 import java.sql.{Connection, Date, DriverManager}
-import com.mysql.jdbc.Driver
+import com.mysql.cj.jdbc.Driver
 
 object DatabaseRecordConsumer extends RecordConsumer {
   if (args.length != 3) {
