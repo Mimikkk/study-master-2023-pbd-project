@@ -44,23 +44,23 @@ object KafkaProcessor extends Processor {
     System.exit(1)
   }
 
-  private final object configuration {
+  object configuration {
     val meta: String = args(0)
 
-    final object kafka {
+    object kafka {
       val server: String = args(1)
       val groupId: String = args(2)
       val contentTopic: String = args(3)
       val anomalyTopic: String = args(4)
     }
 
-    final object database {
+    object database {
       val url: String = args(5)
       val username: String = args(6)
       val password: String = args(7)
     }
 
-    final object anomaly {
+    object anomaly {
       val dayRange: Int = args(8).toInt
       val percentageFluctuation: Float = args(9).toFloat / 100
     }
@@ -69,16 +69,16 @@ object KafkaProcessor extends Processor {
   }
 
 
-  private final val numberOfRetries = 5
-  private final val millisecondsBetweenAttempts = 0
+  val numberOfRetries = 5
+  val millisecondsBetweenAttempts = 0
 
-  private final val format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+  val format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
-  private final val environment = StreamExecutionEnvironment.getExecutionEnvironment
+  val environment = StreamExecutionEnvironment.getExecutionEnvironment
   environment.getConfig.setRestartStrategy(fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
   environment.registerCachedFile(configuration.meta, StockMeta.name)
 
-  private final val source = KafkaSource.builder[String]
+  val source = KafkaSource.builder[String]
     .setBootstrapServers(configuration.kafka.server)
     .setTopics(configuration.kafka.contentTopic)
     .setGroupId(configuration.kafka.groupId)
@@ -111,12 +111,12 @@ object KafkaProcessor extends Processor {
     .map(intopierdolsie)
     .assignTimestampsAndWatermarks(new StockPriceWatermarkStrategy)
 
-  private final val url = configuration.database.url
-  private final val username = configuration.database.username
-  private final val password = configuration.database.password
+  val url = configuration.database.url
+  val username = configuration.database.username
+  val password = configuration.database.password
 
 
-  private final val insertStatement: String =
+  val insertStatement: String =
     """
     INSERT INTO stock_prices (
       window_start,
@@ -130,7 +130,7 @@ object KafkaProcessor extends Processor {
       ON DUPLICATE KEY UPDATE close=?, low=?, high=?, volume=?
     """
 
-  private val every = configuration.updateStrategy match {
+  val every = configuration.updateStrategy match {
     case UpdateStrategy.Realtime => Time days 1
     case UpdateStrategy.Historical => Time seconds 10
   }
@@ -171,7 +171,7 @@ object KafkaProcessor extends Processor {
   //    ))
 
 
-  private final val percentageFluctuation = configuration.anomaly.percentageFluctuation
+  val percentageFluctuation = configuration.anomaly.percentageFluctuation
   //  recordStream
   //    .keyBy(_.stockId)
   //    .window(TumblingEventTimeWindows of (Time days configuration.anomaly.dayRange))
