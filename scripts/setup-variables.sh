@@ -16,7 +16,7 @@ export KAFKA_GROUP_ID="stock-prices-group"
 # Database parameters
 export JDBC_URL="jdbc:mysql://${CLUSTER_NAME}-m:3306/stock-prices"
 export JDBC_USERNAME="stream-user"
-export JDBC_PASSWORD="password"
+export JDBC_PASSWORD="stream"
 
 # Flink parameters
 export FLINK_DIRECTORY="$HOME/flink-1.15.4"
