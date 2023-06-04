@@ -10,7 +10,7 @@ class StockPriceAnomalyEntitleFunction extends RichMapFunction[StockPriceAnomaly
   }
 
   override def map(value: StockPriceAnomalyProcessFunction.Result): Result =
-    Result(value.start, value.end, name(value.stockId), value.stockId, value.min, value.max, value.fluctuation)
+    Result(value.start, value.end, value.stockId, name(value.stockId), value.min, value.max, value.fluctuation)
 
   private var nameByStockIdMap: Map[String, String] = _
 
@@ -21,5 +21,5 @@ class StockPriceAnomalyEntitleFunction extends RichMapFunction[StockPriceAnomaly
 }
 
 object StockPriceAnomalyEntitleFunction {
-  final case class Result(start: Long, end: Long, title: String, stockId: String, min: Float, max: Float, fluctuation: Float)
+  final case class Result(start: Long, end: Long, stockId: String, title: String, min: Float, max: Float, fluctuation: Float)
 }

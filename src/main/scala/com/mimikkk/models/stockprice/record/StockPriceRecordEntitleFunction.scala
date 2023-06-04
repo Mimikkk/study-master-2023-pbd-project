@@ -21,5 +21,5 @@ class StockPriceRecordEntitleFunction extends RichMapFunction[StockPriceRecordPr
 }
 
 object StockPriceRecordEntitleFunction {
-  final case class Result(start: Long, title: String, stockId: String, close: Float, low: Float, high: Float, volume: Int)
+  final case class Result(start: Long, stockId: String, title: String, close: Float, low: Float, high: Float, volume: Int)
 }
