@@ -72,8 +72,6 @@ object KafkaProcessor extends Processor {
   val numberOfRetries = 5
   val millisecondsBetweenAttempts = 0
 
-  val format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-
   val environment = StreamExecutionEnvironment.getExecutionEnvironment
   environment.getConfig.setRestartStrategy(fixedDelayRestart(numberOfRetries, millisecondsBetweenAttempts))
   environment.registerCachedFile(configuration.meta, StockMeta.name)
@@ -94,21 +92,20 @@ object KafkaProcessor extends Processor {
   //  private final val stringStream = environment fromSource
   //    (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
 
-  def intopierdolsie = (stream: Array[String]) => StockPrice(
-    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") parse stream(0),
-    stream(1).toFloat,
-    stream(2).toFloat,
-    stream(3).toFloat,
-    stream(4).toFloat,
-    stream(5).toFloat,
-    stream(6).toFloat.toInt,
-    stream(7),
-  )
-
+  val format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
   private final val recordStream = stringStream
     .map(_ split ",")
     .filter(stream => stream != null && stream.length == 8 && !stream.contains(""))
-    .map(intopierdolsie)
+    .map(stream => StockPrice(
+      format parse stream(0),
+      stream(1).toFloat,
+      stream(2).toFloat,
+      stream(3).toFloat,
+      stream(4).toFloat,
+      stream(5).toFloat,
+      stream(6).toFloat.toInt,
+      stream(7),
+    ))
     .assignTimestampsAndWatermarks(new StockPriceWatermarkStrategy)
 
   val url = configuration.database.url
