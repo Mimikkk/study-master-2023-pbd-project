@@ -45,7 +45,7 @@ object KafkaRecordProducer extends RecordProducer {
   partsPaths.sorted.zipWithIndex foreach (pair => try {
     val (path, index) = pair
 
-    println(s"< Stream '${index + 1}/${partsPaths.length}' Sent >")
+    println(s"< Stream $path : '${index + 1}/${partsPaths.length}' Sent >")
     lines(Paths get path) skip 1 forEach (
       row => producer send new ProducerRecord(configuration.topic, row.split(',')(0), row)
       )
