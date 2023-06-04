@@ -83,9 +83,15 @@ object KafkaProcessor extends Processor {
     .setGroupId(configuration.kafka.groupId)
     .setValueOnlyDeserializer(new SimpleStringSchema)
     .build
+  val properties = new Properties()
+  properties.setProperty("bootstrap.servers", configuration.kafka.server)
+  properties.setProperty("group.id", configuration.kafka.groupId)
 
-  private final val stringStream = environment fromSource
-    (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
+  val stringStream = environment.addSource(new FlinkKafkaConsumer[String](configuration.kafka.contentTopic, new SimpleStringSchema(), properties))
+
+
+//  private final val stringStream = environment fromSource
+//    (source, WatermarkStrategy.noWatermarks(), s"Kafka ${configuration.kafka.contentTopic} Source")
 
   private final val recordStream = stringStream
     .map(_ split ",")
