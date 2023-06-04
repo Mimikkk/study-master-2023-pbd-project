@@ -4,10 +4,9 @@ import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 
 import java.io.File
 import java.nio.file.Files._
-import java.nio.file.{Files, Paths}
+import java.nio.file.Paths
 import java.util.Properties
-import java.util.concurrent.TimeUnit
-import java.util.function.Consumer
+import java.util.concurrent.TimeUnit.SECONDS
 import scala.collection.JavaConverters._
 
 object KafkaRecordProducer extends RecordProducer {
@@ -32,11 +31,6 @@ object KafkaRecordProducer extends RecordProducer {
   private final val properties = new Properties {
     putAll(Map(
       "bootstrap.servers" -> server,
-      "acks" -> "all",
-      "retries" -> "0",
-      "batch.size" -> "16384",
-      "linger.ms" -> "1",
-      "buffer.memory" -> "33554432",
       "key.serializer" -> "org.apache.kafka.common.serialization.StringSerializer",
       "value.serializer" -> "org.apache.kafka.common.serialization.StringSerializer"
     ).asJava)
@@ -50,14 +44,11 @@ object KafkaRecordProducer extends RecordProducer {
     val (path, index) = pair
 
     println(s"< Stream '${index + 1}/${partsPaths.length}' Sending... >")
-    Files.lines(Paths.get(path)).
-      skip(1).
-      forEach(
-        new Consumer[String] {
-          override def accept(t: String): Unit = producer.send(new ProducerRecord[String, String](topic, t.split(',')(0), t))
-        })
+    lines(Paths get path) skip 1 forEach (
+      row => producer send new ProducerRecord[String, String](topic, row.split(',')(0), row)
+      )
     println(s"< Stream Sent. >")
-    TimeUnit.SECONDS.sleep(secondsBetweenParts)
+    SECONDS sleep secondsBetweenParts
   } catch {
     case e: Throwable => e printStackTrace()
   })
