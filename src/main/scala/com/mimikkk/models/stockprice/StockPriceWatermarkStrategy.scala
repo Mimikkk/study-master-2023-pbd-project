@@ -14,7 +14,7 @@ final class StockPriceWatermarkStrategy extends WatermarkStrategyBase[StockPrice
     private var maxTimestamp: Long = _
 
     override def onEvent(item: StockPrice, long: Long, output: WatermarkOutput): Unit = {
-      maxTimestamp = math.max(item.date.getTime, maxTimestamp)
+      maxTimestamp = math.max(0, maxTimestamp)
     }
 
     override def onPeriodicEmit(watermarkOutput: WatermarkOutput): Unit = {
@@ -23,6 +23,6 @@ final class StockPriceWatermarkStrategy extends WatermarkStrategyBase[StockPrice
   }
 
   final class TimestampAssigner extends TimestampAssignerBase[StockPrice] {
-    override def extractTimestamp(model: StockPrice, long: Long): Long = model.date.getTime
+    override def extractTimestamp(model: StockPrice, long: Long): Long = 0
   }
 }
