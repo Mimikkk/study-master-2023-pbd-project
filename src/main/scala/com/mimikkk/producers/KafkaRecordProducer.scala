@@ -31,6 +31,11 @@ object KafkaRecordProducer extends RecordProducer {
   private final val properties = new Properties {
     putAll(Map(
       "bootstrap.servers" -> server,
+      "acks" -> "all",
+      "retries" -> "0",
+      "batch.size" -> "16384",
+      "linger.ms" -> "1",
+      "buffer.memory" -> "33554432",
       "key.serializer" -> "org.apache.kafka.common.serialization.StringSerializer",
       "value.serializer" -> "org.apache.kafka.common.serialization.StringSerializer"
     ).asJava)
@@ -47,7 +52,7 @@ object KafkaRecordProducer extends RecordProducer {
     lines(Paths get path) skip 1 forEach (
       row => {
         println("  " + row)
-        producer send new ProducerRecord(topic, row.split(',')(0), row)
+        producer send new ProducerRecord[String, String](topic, row.split(',')(0), row)
       }
       )
     println(s"< Stream Sent. >")
